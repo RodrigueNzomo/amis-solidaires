@@ -7,22 +7,24 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gestion des Membres</title>
     <link rel="stylesheet" href="css/styles.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
 </head>
 
 <body>
-    <header>
-        <h1>Gestion des Membres</h1>
+    <header class="bg-light p-3">
+        <h1 class="text-center">Gestion des Membres</h1>
         <nav>
-            <ul>
-                <li><a href="index.html">Retour au Tableau de Bord</a></li>
+            <ul class="nav justify-content-center">
+                <li class="nav-item"><a class="nav-link" href="index.html">Retour au Tableau de Bord</a></li>
             </ul>
         </nav>
     </header>
 
-    <main>
+    <main class="container mt-4">
         <section id="membres">
             <h2>Liste des Membres</h2>
-            <table>
+            <table class="table table-striped">
                 <thead>
                     <tr>
                         <th>ID</th>
@@ -39,30 +41,41 @@
             </table>
         </section>
 
-        <section id="ajouter-membre">
+        <section id="ajouter-membre" class="mt-4">
             <h2>Ajouter un Membre</h2>
-            <form id="form-membre">
-                <label for="nom">Nom :</label>
-                <input type="text" id="nom" name="nom" required>
-
-                <label for="prenom">Prénom :</label>
-                <input type="text" id="prenom" name="prenom" required>
-
-                <label for="email">Email :</label>
-                <input type="email" id="email" name="email" required>
-
-                <label for="telephone">Téléphone :</label>
-                <input type="text" id="telephone" name="telephone" required>
-
-                <label for="statut">Statut :</label>
-                <input type="text" id="statut" name="statut" required>
-
-                <button type="submit">Ajouter Membre</button>
+            <form id="form-membre" class="needs-validation" novalidate>
+                <div class="mb-3">
+                    <label for="nom" class="form-label">Nom :</label>
+                    <input type="text" class="form-control" id="nom" name="nom" required>
+                </div>
+                <div class="mb-3">
+                    <label for="prenom" class="form-label">Prénom :</label>
+                    <input type="text" class="form-control" id="prenom" name="prenom" required>
+                </div>
+                <div class="mb-3">
+                    <label for="email" class="form-label">Email :</label>
+                    <input type="email" class="form-control" id="email" name="email" required>
+                </div>
+                <div class="mb-3">
+                    <label for="telephone" class="form-label">Téléphone :</label>
+                    <input type="text" class="form-control" id="telephone" name="telephone" required>
+                </div>
+                <div class="mb-3">
+                    <label for="statut" class="form-label">Statut :</label>
+                    <input type="text" class="form-control" id="statut" name="statut" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Ajouter Membre</button>
             </form>
         </section>
     </main>
 
     <script src="js/membre.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
+        integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"
+        integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy"
+        crossorigin="anonymous"></script>
 </body>
 
 </html>

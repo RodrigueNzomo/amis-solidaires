@@ -1,4 +1,5 @@
 <!-- # Page pour la gestion des cotisations -->
+<!-- # Page pour la gestion des cotisations -->
 <!DOCTYPE html>
 <html lang="fr">
 
@@ -7,22 +8,24 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gestion des Cotisations</title>
     <link rel="stylesheet" href="css/styles.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
 </head>
 
 <body>
     <header>
         <h1>Gestion des Cotisations</h1>
         <nav>
-            <ul>
-                <li><a href="index.html">Retour au Tableau de Bord</a></li>
+            <ul class="nav">
+                <li class="nav-item"><a class="nav-link" href="index.html">Retour au Tableau de Bord</a></li>
             </ul>
         </nav>
     </header>
 
     <main>
-        <section id="cotisations">
+        <section id="cotisations" class="container mt-4">
             <h2>Liste des Cotisations</h2>
-            <table>
+            <table class="table table-striped">
                 <thead>
                     <tr>
                         <th>ID</th>
@@ -38,24 +41,33 @@
             </table>
         </section>
 
-        <section id="ajouter-cotisation">
+        <section id="ajouter-cotisation" class="container mt-4">
             <h2>Ajouter une Cotisation</h2>
             <form id="form-cotisation">
-                <label for="idMembre">ID Membre :</label>
-                <input type="number" id="idMembre" name="idMembre" required>
-
-                <label for="montant">Montant :</label>
-                <input type="number" id="montant" name="montant" required>
-
-                <label for="dateVersement">Date :</label>
-                <input type="date" id="dateVersement" name="dateVersement" required>
-
-                <button type="submit">Ajouter Cotisation</button>
+                <div class="mb-3">
+                    <label for="idMembre" class="form-label">ID Membre :</label>
+                    <input type="number" id="idMembre" name="idMembre" class="form-control" required>
+                </div>
+                <div class="mb-3">
+                    <label for="montant" class="form-label">Montant :</label>
+                    <input type="number" id="montant" name="montant" class="form-control" required>
+                </div>
+                <div class="mb-3">
+                    <label for="dateVersement" class="form-label">Date :</label>
+                    <input type="date" id="dateVersement" name="dateVersement" class="form-control" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Ajouter Cotisation</button>
             </form>
         </section>
     </main>
 
     <script src="js/cotisation.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
+        integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"
+        integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy"
+        crossorigin="anonymous"></script>
 </body>
 
 </html>
