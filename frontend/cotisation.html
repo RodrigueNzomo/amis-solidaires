@@ -1,0 +1,61 @@
+<!-- # Page pour la gestion des cotisations -->
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestion des Cotisations</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+
+<body>
+    <header>
+        <h1>Gestion des Cotisations</h1>
+        <nav>
+            <ul>
+                <li><a href="index.html">Retour au Tableau de Bord</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section id="cotisations">
+            <h2>Liste des Cotisations</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Membre</th>
+                        <th>Montant</th>
+                        <th>Date</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="liste-cotisations">
+                    <!-- Les cotisations seront chargées ici via JavaScript -->
+                </tbody>
+            </table>
+        </section>
+
+        <section id="ajouter-cotisation">
+            <h2>Ajouter une Cotisation</h2>
+            <form id="form-cotisation">
+                <label for="idMembre">ID Membre :</label>
+                <input type="number" id="idMembre" name="idMembre" required>
+
+                <label for="montant">Montant :</label>
+                <input type="number" id="montant" name="montant" required>
+
+                <label for="dateVersement">Date :</label>
+                <input type="date" id="dateVersement" name="dateVersement" required>
+
+                <button type="submit">Ajouter Cotisation</button>
+            </form>
+        </section>
+    </main>
+
+    <script src="js/cotisation.js"></script>
+</body>
+
+</html>

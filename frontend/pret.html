@@ -1,0 +1,65 @@
+<!-- # Page pour la gestion des prêts et aides -->
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestion des Prêts et Aides</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+
+<body>
+    <header>
+        <h1>Gestion des Prêts et Aides</h1>
+        <nav>
+            <ul>
+                <li><a href="index.html">Retour au Tableau de Bord</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section id="prets">
+            <h2>Liste des Prêts</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Membre</th>
+                        <th>Montant</th>
+                        <th>Taux d'Intérêt</th>
+                        <th>Date d'Échéance</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="liste-prets">
+                    <!-- Les prêts seront chargés ici via JavaScript -->
+                </tbody>
+            </table>
+        </section>
+
+        <section id="ajouter-pret">
+            <h2>Ajouter un Prêt</h2>
+            <form id="form-pret">
+                <label for="idMembre">ID Membre :</label>
+                <input type="number" id="idMembre" name="idMembre" required>
+
+                <label for="montant">Montant :</label>
+                <input type="number" id="montant" name="montant" required>
+
+                <label for="tauxInteret">Taux d'Intérêt (%) :</label>
+                <input type="number" id="tauxInteret" name="tauxInteret" required>
+
+                <label for="echeance">Date d'Échéance :</label>
+                <input type="date" id="echeance" name="echeance" required>
+
+                <button type="submit">Ajouter Prêt</button>
+            </form>
+        </section>
+    </main>
+
+    <script src="js/pret.js"></script>
+</body>
+
+</html>

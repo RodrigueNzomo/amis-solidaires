@@ -1,0 +1,68 @@
+<!-- # Page pour la gestion des membres -->
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestion des Membres</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+
+<body>
+    <header>
+        <h1>Gestion des Membres</h1>
+        <nav>
+            <ul>
+                <li><a href="index.html">Retour au Tableau de Bord</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section id="membres">
+            <h2>Liste des Membres</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nom</th>
+                        <th>Prénom</th>
+                        <th>Email</th>
+                        <th>Téléphone</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="liste-membres">
+                    <!-- Les membres seront chargés ici via JavaScript -->
+                </tbody>
+            </table>
+        </section>
+
+        <section id="ajouter-membre">
+            <h2>Ajouter un Membre</h2>
+            <form id="form-membre">
+                <label for="nom">Nom :</label>
+                <input type="text" id="nom" name="nom" required>
+
+                <label for="prenom">Prénom :</label>
+                <input type="text" id="prenom" name="prenom" required>
+
+                <label for="email">Email :</label>
+                <input type="email" id="email" name="email" required>
+
+                <label for="telephone">Téléphone :</label>
+                <input type="text" id="telephone" name="telephone" required>
+
+                <label for="statut">Statut :</label>
+                <input type="text" id="statut" name="statut" required>
+
+                <button type="submit">Ajouter Membre</button>
+            </form>
+        </section>
+    </main>
+
+    <script src="js/membre.js"></script>
+</body>
+
+</html>
