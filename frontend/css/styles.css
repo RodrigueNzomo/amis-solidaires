@@ -3,7 +3,7 @@
 
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: #f9f9f9;
+    background-color: #4b98e4;
     margin: 0;
     padding: 0;
     color: #333;
@@ -21,7 +21,7 @@ header {
     font-size: 2rem;
     font-family: 'Montserrat', sans-serif;
     font-weight: bold;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 8px hsla(330, 76%, 38%, 0.102);
 }
 
 /* Navigation avec style moderne */
