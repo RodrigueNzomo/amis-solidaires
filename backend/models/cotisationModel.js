@@ -1,14 +1,4 @@
-// //  cotisationModel.js : Définissent les modèles de données pour chaque entité.
-// class Cotisation {
-//   constructor(idMembre, montant, dateVersement) {
-//     this.idMembre = idMembre;
-//     this.montant = montant;
-//     this.dateVersement = dateVersement;
-//   }
-// }
 
-// module.exports = Cotisation;
-class Cotisation {
   constructor(idMembre, montant, dateVersement) {
     this.idMembre = idMembre;
     this.montant = montant;
