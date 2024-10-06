@@ -3,7 +3,6 @@ const db = require("../models/cotisationModel");
 // Lister toutes les cotisations
 exports.listerCotisations = (req, res) => {
   const sql = "SELECT * FROM cotisations";
-
   db.all(sql, [], (err, rows) => {
     if (err) {
       return res.status(500).json({
@@ -14,20 +13,16 @@ exports.listerCotisations = (req, res) => {
     }
 
     if (rows.length === 0) {
-      return res.status(404).json({
-        status: "fail",
-        message: "Aucune cotisation trouvée",
-      });
+      return res
+        .status(404)
+        .json({ status: "fail", message: "Aucune cotisation trouvée" });
     }
 
-    res.status(200).json({
-      status: "success",
-      data: rows,
-    });
+    res.status(200).json({ status: "success", data: rows });
   });
 };
 
-// Créer une cotisation avec validation
+// Créer une cotisation
 exports.creerCotisation = (req, res) => {
   const { membre_id, montant, date } = req.body;
 
@@ -38,8 +33,10 @@ exports.creerCotisation = (req, res) => {
     });
   }
 
-  const sql = `INSERT INTO cotisations (membre_id, montant, date, statut) VALUES (?, ?, ?, ?)`;
+  const sql =
+    "INSERT INTO cotisations (membre_id, montant, date, statut) VALUES (?, ?, ?, ?)";
   const params = [membre_id, montant, date, "en attente"];
+
   db.run(sql, params, function (err) {
     if (err) {
       return res.status(500).json({
@@ -62,7 +59,7 @@ exports.creerCotisation = (req, res) => {
   });
 };
 
-// Modifier une cotisation avec validation
+// Modifier une cotisation
 exports.modifierCotisation = (req, res) => {
   const { membre_id, montant, date, statut } = req.body;
   const id = parseInt(req.params.id);
@@ -74,7 +71,8 @@ exports.modifierCotisation = (req, res) => {
     });
   }
 
-  const sql = `UPDATE cotisations SET membre_id = ?, montant = ?, date = ?, statut = ? WHERE id = ?`;
+  const sql =
+    "UPDATE cotisations SET membre_id = ?, montant = ?, date = ?, statut = ? WHERE id = ?";
   const params = [membre_id, montant, date, statut, id];
 
   db.run(sql, params, function (err) {
@@ -95,13 +93,7 @@ exports.modifierCotisation = (req, res) => {
 
     res.status(200).json({
       status: "success",
-      data: {
-        id,
-        membre_id,
-        montant,
-        date,
-        statut,
-      },
+      data: { id, membre_id, montant, date, statut },
     });
   });
 };
@@ -109,7 +101,7 @@ exports.modifierCotisation = (req, res) => {
 // Supprimer une cotisation
 exports.supprimerCotisation = (req, res) => {
   const id = parseInt(req.params.id);
-  const sql = `DELETE FROM cotisations WHERE id = ?`;
+  const sql = "DELETE FROM cotisations WHERE id = ?";
 
   db.run(sql, id, function (err) {
     if (err) {
