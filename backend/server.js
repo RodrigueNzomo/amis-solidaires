@@ -5,7 +5,7 @@ const sqlite3 = require("sqlite3").verbose();
 const membreRoutes = require("./routes/membreRoutes"); // Importer les routes des membres
 const cotisationRoutes = require("./routes/cotisationRoutes"); // Importer les routes des cotisations
 const pretRoutes = require("./routes/pretRoutes"); // Importer les routes des prêts
-
+const aideRoutes = require("./routes/aideRoutes"); // Importer les routes des aides
 // Fonction pour ouvrir une base de données SQLite
 const openDatabase = (dbPath) => {
   return new sqlite3.Database(dbPath, (err) => {
@@ -100,7 +100,7 @@ app.use(bodyParser.json());
 app.use("/api/membres", membreRoutes);
 app.use("/api/cotisations", cotisationRoutes);
 app.use("/api/prets", pretRoutes);
-
+app.use("/api/aides", aideRoutes); // Utiliser les routes pour les aides
 // Démarrer la base de données et créer les tables
 const db = openDatabase("./database.sqlite");
 createTables(db);
