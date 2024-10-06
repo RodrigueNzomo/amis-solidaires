@@ -5,9 +5,12 @@ const pretController = require("../controllers/pretController");
 // Routes CRUD pour les prêts
 router
   .route("/")
-  .get(pretController.listerPrets)
-  .post(pretController.ajouterPret);
+  .get(pretController.listerPrets) // Lister tous les prêts
+  .post(pretController.creerPret); // Créer un nouveau prêt
 
-router.route("/:id").delete(pretController.supprimerPret);
+router
+  .route("/:id")
+  .put(pretController.modifierPret) // Modifier un prêt existant
+  .delete(pretController.supprimerPret); // Supprimer un prêt
 
 module.exports = router;

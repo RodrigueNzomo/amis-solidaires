@@ -1,66 +1,154 @@
-let prets = []; // Base de données simulée
+const db = require("../models/pretModel");
 
+// Lister tous les prêts
 exports.listerPrets = (req, res) => {
-  if (prets.length === 0) {
-    return res.status(404).json({
-      status: "fail",
-      message: "Aucun prêt trouvé",
-    });
-  }
+  const sql = "SELECT * FROM prets";
 
-  return res.status(200).json({
-    status: "success",
-    data: prets,
+  db.all(sql, [], (err, rows) => {
+    if (err) {
+      return res.status(500).json({
+        status: "error",
+        message: "Erreur lors de la récupération des prêts",
+        error: err.message,
+      });
+    }
+
+    if (rows.length === 0) {
+      return res.status(404).json({
+        status: "fail",
+        message: "Aucun prêt trouvé",
+      });
+    }
+
+    res.status(200).json({
+      status: "success",
+      data: rows,
+    });
   });
 };
 
-exports.ajouterPret = (req, res) => {
-  const { idMembre, montant, tauxInteret, echeance } = req.body;
+// Créer un prêt avec validation
+exports.creerPret = (req, res) => {
+  const { membre_id, montant, date_debut, date_fin, taux_interet } = req.body;
 
-  // Validation simple
-  if (
-    !idMembre ||
-    !montant ||
-    montant <= 0 ||
-    !tauxInteret ||
-    tauxInteret <= 0
-  ) {
+  if (!membre_id || !montant || !date_debut || !date_fin) {
     return res.status(400).json({
       status: "fail",
       message:
-        "ID membre, montant, et taux d'intérêt sont obligatoires, et doivent être positifs",
+        "Le membre, le montant, la date de début et la date de fin sont obligatoires",
     });
   }
 
-  const nouveauPret = {
-    id: prets.length + 1,
-    idMembre,
+  const sql = `INSERT INTO prets (membre_id, montant, date_debut, date_fin, taux_interet, statut) VALUES (?, ?, ?, ?, ?, ?)`;
+  const params = [
+    membre_id,
     montant,
-    tauxInteret,
-    echeance: echeance || new Date().toISOString(), // Utilise la date actuelle si aucune date d'échéance n'est fournie
-  };
+    date_debut,
+    date_fin,
+    taux_interet || 0,
+    "en cours",
+  ];
+  db.run(sql, params, function (err) {
+    if (err) {
+      return res.status(500).json({
+        status: "error",
+        message: "Erreur lors de la création du prêt",
+        error: err.message,
+      });
+    }
 
-  prets.push(nouveauPret);
-
-  return res.status(201).json({
-    status: "success",
-    data: nouveauPret,
+    res.status(201).json({
+      status: "success",
+      data: {
+        id: this.lastID,
+        membre_id,
+        montant,
+        date_debut,
+        date_fin,
+        taux_interet: taux_interet || 0,
+        statut: "en cours",
+      },
+    });
   });
 };
 
-exports.supprimerPret = (req, res) => {
-  const id = parseInt(req.params.id, 10);
+// Modifier un prêt avec validation
+exports.modifierPret = (req, res) => {
+  const { membre_id, montant, date_debut, date_fin, taux_interet, statut } =
+    req.body;
+  const id = parseInt(req.params.id);
 
-  const index = prets.findIndex((p) => p.id === id);
-
-  if (index === -1) {
-    return res.status(404).json({
+  if (!membre_id || !montant || !date_debut || !date_fin || !statut) {
+    return res.status(400).json({
       status: "fail",
-      message: `Prêt avec l'ID ${id} non trouvé`,
+      message:
+        "Le membre, le montant, les dates et le statut sont obligatoires",
     });
   }
 
-  prets.splice(index, 1);
+  const sql = `UPDATE prets SET membre_id = ?, montant = ?, date_debut = ?, date_fin = ?, taux_interet = ?, statut = ? WHERE id = ?`;
+  const params = [
+    membre_id,
+    montant,
+    date_debut,
+    date_fin,
+    taux_interet || 0,
+    statut,
+    id,
+  ];
 
-  return res.status(204).send(); // Réponse sans contenu, succès
+  db.run(sql, params, function (err) {
+    if (err) {
+      return res.status(500).json({
+        status: "error",
+        message: "Erreur lors de la modification du prêt",
+        error: err.message,
+      });
+    }
+
+    if (this.changes === 0) {
+      return res.status(404).json({
+        status: "fail",
+        message: `Prêt avec l'ID ${id} non trouvé`,
+      });
+    }
+
+    res.status(200).json({
+      status: "success",
+      data: {
+        id,
+        membre_id,
+        montant,
+        date_debut,
+        date_fin,
+        taux_interet,
+        statut,
+      },
+    });
+  });
+};
+
+// Supprimer un prêt
+exports.supprimerPret = (req, res) => {
+  const id = parseInt(req.params.id);
+  const sql = `DELETE FROM prets WHERE id = ?`;
+
+  db.run(sql, id, function (err) {
+    if (err) {
+      return res.status(500).json({
+        status: "error",
+        message: "Erreur lors de la suppression du prêt",
+        error: err.message,
+      });
+    }
+
+    if (this.changes === 0) {
+      return res.status(404).json({
+        status: "fail",
+        message: `Prêt avec l'ID ${id} non trouvé`,
+      });
+    }
+
+    res.status(204).send(); // Succès, aucun contenu à retourner
+  });
 };

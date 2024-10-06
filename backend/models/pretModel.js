@@ -1,18 +1,33 @@
-class Pret {
-  constructor(idMembre, montant, tauxInteret, echeance) {
-    this.idMembre = idMembre;
-    this.montant = montant;
-    this.tauxInteret = tauxInteret;
-    this.echeance = echeance;
-  }
+const sqlite3 = require("sqlite3").verbose();
+const db = new sqlite3.Database(__dirname + "/../database.sqlite"); // Connexion à la base de données
 
-  calculerInteret() {
-    return (this.montant * this.tauxInteret) / 100;
-  }
+// Créer la table des prêts si elle n'existe pas
+const createTable = () => {
+  const sql = `
+    CREATE TABLE IF NOT EXISTS prets (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      membre_id INTEGER NOT NULL,
+      montant REAL NOT NULL,
+      date_debut TEXT NOT NULL,
+      date_fin TEXT NOT NULL,
+      statut TEXT NOT NULL DEFAULT 'en cours',
+      taux_interet REAL DEFAULT 0,
+      FOREIGN KEY (membre_id) REFERENCES membres(id)
+    )`;
 
-  montantTotal() {
-    return this.montant + this.calculerInteret();
-  }
-}
+  db.run(sql, (err) => {
+    if (err) {
+      console.error(
+        "Erreur lors de la création de la table 'prets' :",
+        err.message
+      );
+    } else {
+      console.log("Table 'prets' créée avec succès.");
+    }
+  });
+};
 
-module.exports = Pret;
+// Appel de la création de la table à l'importation du module
+createTable();
+
+module.exports = db;
