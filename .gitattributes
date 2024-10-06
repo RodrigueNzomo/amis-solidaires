@@ -1,0 +1,9 @@
+# Fichiers texte traités avec des fins de ligne Unix (LF)
+*.js text eol=lf
+*.md text eol=lf
+*.json text eol=lf
+*.html text eol=lf
+
+# Fichiers binaires
+*.png binary
+*.jpg binary
