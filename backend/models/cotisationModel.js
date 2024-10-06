@@ -1,4 +1,4 @@
-
+class Cotisation {
   constructor(idMembre, montant, dateVersement) {
     this.idMembre = idMembre;
     this.montant = montant;
@@ -9,7 +9,7 @@
   afficherDetails() {
     return `Membre ID: ${this.idMembre}, Montant: ${
       this.montant
-    }FCFA, Date de Versement: ${this.dateVersement.toLocaleDateString()}`;
+    } FCFA, Date de Versement: ${this.dateVersement.toLocaleDateString()}`;
   }
 }
 
