@@ -54,7 +54,8 @@ const db = openDatabase("./database.sqlite");
 createTable(db);
 
 // Démarrer le serveur sur le port 3000
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 4000;
+
 app.listen(PORT, () => {
   console.log(`Serveur démarré sur le port ${PORT}`);
 });
