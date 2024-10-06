@@ -1,16 +1,26 @@
 const express = require("express");
 const router = express.Router();
 const pretController = require("../controllers/pretController");
+const verifierToken = require("../middlewares/authMiddleware");
+const verifierRole = require("../middlewares/roleMiddleware");
 
-// Routes CRUD pour les prêts
+// Routes CRUD pour les prêts avec protection JWT et gestion des rôles
 router
   .route("/")
-  .get(pretController.listerPrets) // Lister tous les prêts
-  .post(pretController.creerPret); // Créer un nouveau prêt
+  .get(
+    verifierToken,
+    verifierRole(["president", "tresorier"]),
+    pretController.listerPrets
+  )
+  .post(verifierToken, verifierRole(["tresorier"]), pretController.creerPret);
 
 router
   .route("/:id")
-  .put(pretController.modifierPret) // Modifier un prêt existant
-  .delete(pretController.supprimerPret); // Supprimer un prêt
+  .put(verifierToken, verifierRole(["tresorier"]), pretController.modifierPret)
+  .delete(
+    verifierToken,
+    verifierRole(["president"]),
+    pretController.supprimerPret
+  );
 
 module.exports = router;

@@ -1,16 +1,26 @@
 const express = require("express");
 const router = express.Router();
 const aideController = require("../controllers/aideController");
+const verifierToken = require("../middlewares/authMiddleware");
+const verifierRole = require("../middlewares/roleMiddleware");
 
-// Routes CRUD pour les aides
+// Routes CRUD pour les aides avec protection JWT et gestion des rôles
 router
   .route("/")
-  .get(aideController.listerAides) // Lister toutes les aides
-  .post(aideController.creerAide); // Créer une nouvelle aide
+  .get(
+    verifierToken,
+    verifierRole(["president", "tresorier"]),
+    aideController.listerAides
+  )
+  .post(verifierToken, verifierRole(["tresorier"]), aideController.creerAide);
 
 router
   .route("/:id")
-  .put(aideController.modifierAide) // Modifier une aide existante
-  .delete(aideController.supprimerAide); // Supprimer une aide
+  .put(verifierToken, verifierRole(["tresorier"]), aideController.modifierAide)
+  .delete(
+    verifierToken,
+    verifierRole(["president"]),
+    aideController.supprimerAide
+  );
 
 module.exports = router;

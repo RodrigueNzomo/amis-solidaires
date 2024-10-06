@@ -1,16 +1,34 @@
 const express = require("express");
 const router = express.Router();
 const cotisationController = require("../controllers/cotisationController");
+const verifierToken = require("../middlewares/authMiddleware");
+const verifierRole = require("../middlewares/roleMiddleware");
 
-// Routes CRUD pour les cotisations
+// Routes CRUD pour les cotisations avec protection JWT et gestion des rôles
 router
   .route("/")
-  .get(cotisationController.listerCotisations) // Lister toutes les cotisations
-  .post(cotisationController.creerCotisation); // Créer une nouvelle cotisation
+  .get(
+    verifierToken,
+    verifierRole(["president", "tresorier"]),
+    cotisationController.listerCotisations
+  )
+  .post(
+    verifierToken,
+    verifierRole(["tresorier"]),
+    cotisationController.creerCotisation
+  );
 
 router
   .route("/:id")
-  .put(cotisationController.modifierCotisation) // Modifier une cotisation existante
-  .delete(cotisationController.supprimerCotisation); // Supprimer une cotisation
+  .put(
+    verifierToken,
+    verifierRole(["tresorier"]),
+    cotisationController.modifierCotisation
+  )
+  .delete(
+    verifierToken,
+    verifierRole(["president"]),
+    cotisationController.supprimerCotisation
+  );
 
 module.exports = router;

@@ -1,5 +1,6 @@
 const sqlite3 = require("sqlite3").verbose();
 const db = new sqlite3.Database("./database.sqlite");
+const bcrypt = require("bcrypt");
 
 // Lister tous les membres
 exports.listerMembres = (req, res) => {
@@ -7,7 +8,6 @@ exports.listerMembres = (req, res) => {
 
   db.all(sql, [], (err, rows) => {
     if (err) {
-      // En cas d'erreur, nous renvoyons une réponse JSON avec le code 500
       return res.status(500).json({
         status: "error",
         message: "Erreur lors de la récupération des membres",
@@ -15,7 +15,6 @@ exports.listerMembres = (req, res) => {
       });
     }
 
-    // Si aucun membre n'est trouvé, nous renvoyons un message informatif
     if (rows.length === 0) {
       return res.status(404).json({
         status: "fail",
@@ -23,7 +22,6 @@ exports.listerMembres = (req, res) => {
       });
     }
 
-    // Si tout fonctionne, nous renvoyons la liste des membres
     res.status(200).json({
       status: "success",
       data: rows,
@@ -31,45 +29,67 @@ exports.listerMembres = (req, res) => {
   });
 };
 
-// Créer un membre avec validation
+// Créer un membre avec validation et hashage du mot de passe
 exports.creerMembre = (req, res) => {
-  const { nom, prenom, email, telephone, statut } = req.body;
+  const { nom, prenom, email, telephone, statut, role, password } = req.body;
 
-  // Validation simple
-  if (!nom || !prenom || !email) {
+  if (!nom || !prenom || !email || !password) {
     return res.status(400).json({
       status: "fail",
-      message: "Nom, prénom, et email sont obligatoires",
+      message: "Nom, prénom, email, et mot de passe sont obligatoires",
     });
   }
 
-  const sql = `INSERT INTO membres (nom, prenom, email, telephone, statut) VALUES (?, ?, ?, ?, ?)`;
-  const params = [nom, prenom, email, telephone, statut || "actif"]; // Valeur par défaut pour statut
-  db.run(sql, params, function (err) {
+  // Hashage du mot de passe avant de le stocker
+  bcrypt.hash(password, 10, (err, hashedPassword) => {
     if (err) {
       return res.status(500).json({
         status: "error",
-        message: "Erreur lors de la création du membre",
+        message: "Erreur lors du hashage du mot de passe",
         error: err.message,
       });
     }
-    res.status(201).json({
-      status: "success",
-      data: {
-        id: this.lastID,
-        nom,
-        prenom,
-        email,
-        telephone,
-        statut: statut || "actif",
-      },
+
+    const sql = `INSERT INTO membres (nom, prenom, email, telephone, statut, role, password) 
+                 VALUES (?, ?, ?, ?, ?, ?, ?)`;
+    const params = [
+      nom,
+      prenom,
+      email,
+      telephone,
+      statut || "actif",
+      role || "membre",
+      hashedPassword,
+    ];
+
+    db.run(sql, params, function (err) {
+      if (err) {
+        return res.status(500).json({
+          status: "error",
+          message: "Erreur lors de la création du membre",
+          error: err.message,
+        });
+      }
+
+      res.status(201).json({
+        status: "success",
+        data: {
+          id: this.lastID,
+          nom,
+          prenom,
+          email,
+          telephone,
+          statut: statut || "actif",
+          role: role || "membre",
+        },
+      });
     });
   });
 };
 
 // Modifier un membre avec validation
 exports.modifierMembre = (req, res) => {
-  const { nom, prenom, email, telephone, statut } = req.body;
+  const { nom, prenom, email, telephone, statut, role, password } = req.body;
   const id = parseInt(req.params.id);
 
   if (!nom || !prenom || !email) {
@@ -79,40 +99,68 @@ exports.modifierMembre = (req, res) => {
     });
   }
 
-  const sql = `UPDATE membres SET nom = ?, prenom = ?, email = ?, telephone = ?, statut = ? WHERE id = ?`;
-  const params = [nom, prenom, email, telephone, statut, id];
+  const updateMember = (hashedPassword) => {
+    const sql = `UPDATE membres SET nom = ?, prenom = ?, email = ?, telephone = ?, statut = ?, role = ?, password = ? WHERE id = ?`;
+    const params = [
+      nom,
+      prenom,
+      email,
+      telephone,
+      statut,
+      role,
+      hashedPassword,
+      id,
+    ];
 
-  db.run(sql, params, function (err) {
-    if (err) {
-      return res.status(500).json({
-        status: "error",
-        message: "Erreur lors de la modification du membre",
-        error: err.message,
+    db.run(sql, params, function (err) {
+      if (err) {
+        return res.status(500).json({
+          status: "error",
+          message: "Erreur lors de la modification du membre",
+          error: err.message,
+        });
+      }
+
+      if (this.changes === 0) {
+        return res.status(404).json({
+          status: "fail",
+          message: `Membre avec l'ID ${id} non trouvé`,
+        });
+      }
+
+      res.status(200).json({
+        status: "success",
+        data: {
+          id,
+          nom,
+          prenom,
+          email,
+          telephone,
+          statut,
+          role,
+        },
       });
-    }
-
-    if (this.changes === 0) {
-      return res.status(404).json({
-        status: "fail",
-        message: `Membre avec l'ID ${id} non trouvé`,
-      });
-    }
-
-    res.status(200).json({
-      status: "success",
-      data: {
-        id,
-        nom,
-        prenom,
-        email,
-        telephone,
-        statut,
-      },
     });
-  });
+  };
+
+  // Si le mot de passe est fourni, nous le hashons
+  if (password) {
+    bcrypt.hash(password, 10, (err, hashedPassword) => {
+      if (err) {
+        return res.status(500).json({
+          status: "error",
+          message: "Erreur lors du hashage du mot de passe",
+          error: err.message,
+        });
+      }
+      updateMember(hashedPassword);
+    });
+  } else {
+    updateMember(null); // Pas de modification du mot de passe
+  }
 };
 
-// Supprimer un membre avec standardisation des réponses
+// Supprimer un membre
 exports.supprimerMembre = (req, res) => {
   const id = parseInt(req.params.id);
   const sql = `DELETE FROM membres WHERE id = ?`;
