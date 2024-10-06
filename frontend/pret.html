@@ -1,4 +1,3 @@
-<!-- # Page pour la gestion des prêts et aides -->
 <!DOCTYPE html>
 <html lang="fr">
 
@@ -12,7 +11,7 @@
 </head>
 
 <body>
-    <header>
+    <header class="container mt-4">
         <h1>Gestion des Prêts et Aides</h1>
         <nav>
             <ul class="nav">
@@ -21,10 +20,11 @@
         </nav>
     </header>
 
-    <main>
+    <main class="container mt-5">
+        <!-- Section Prêts -->
         <section id="prets">
             <h2>Liste des Prêts</h2>
-            <table class="table">
+            <table class="table table-striped">
                 <thead>
                     <tr>
                         <th>ID</th>
@@ -41,7 +41,8 @@
             </table>
         </section>
 
-        <section id="ajouter-pret">
+        <!-- Formulaire d'ajout de prêt -->
+        <section id="ajouter-pret" class="mt-4">
             <h2>Ajouter un Prêt</h2>
             <form id="form-pret">
                 <div class="mb-3">
@@ -63,6 +64,43 @@
                 <button type="submit" class="btn btn-primary">Ajouter Prêt</button>
             </form>
         </section>
+
+        <!-- Filtrage et tri des prêts -->
+        <section class="container mt-4">
+            <h2>Filtrer et Trier les Prêts</h2>
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <button id="tri-montant" class="btn btn-secondary me-2">Trier par Montant</button>
+                    <button id="tri-date-debut" class="btn btn-secondary me-2">Trier par Date de Début</button>
+                    <button id="tri-statut" class="btn btn-secondary">Trier par Statut</button>
+                </div>
+                <div class="mb-3">
+                    <label for="filtre-statut" class="form-label">Filtrer par statut :</label>
+                    <select id="filtre-statut" class="form-select">
+                        <option value="" selected>Tous les statuts</option>
+                        <option value="en cours">En cours</option>
+                        <option value="remboursé">Remboursé</option>
+                    </select>
+                </div>
+            </div>
+        </section>
+
+        <!-- Liste des prêts après tri et filtrage -->
+        <table class="table table-striped mt-3">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Membre</th>
+                    <th>Montant</th>
+                    <th>Date de Début</th>
+                    <th>Date de Fin</th>
+                    <th>Statut</th>
+                </tr>
+            </thead>
+            <tbody id="liste-prets">
+                <!-- Les prêts seront chargés ici via JavaScript -->
+            </tbody>
+        </table>
     </main>
 
     <script src="js/pret.js"></script>

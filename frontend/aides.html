@@ -11,17 +11,20 @@
 </head>
 
 <body>
-    <header>
+    <header class="bg-light p-3 text-center">
         <h1>Gestion des Aides</h1>
         <nav>
-            <ul class="nav">
-                <li class="nav-item"><a class="nav-link" href="index.html">Retour au Tableau de Bord</a></li>
+            <ul class="nav justify-content-center">
+                <li class="nav-item">
+                    <a class="nav-link" href="index.html">Retour au Tableau de Bord</a>
+                </li>
             </ul>
         </nav>
     </header>
 
-    <main>
-        <section id="aides" class="container mt-4">
+    <main class="container mt-4">
+        <!-- Section Liste des Aides -->
+        <section id="aides">
             <h2>Liste des Aides</h2>
             <table class="table table-striped">
                 <thead>
@@ -40,9 +43,10 @@
             </table>
         </section>
 
-        <section id="ajouter-aide" class="container mt-4">
+        <!-- Section Ajouter une Aide -->
+        <section id="ajouter-aide" class="mt-4">
             <h2>Ajouter une Aide</h2>
-            <form id="form-aide">
+            <form id="form-aide" class="needs-validation" novalidate>
                 <div class="mb-3">
                     <label for="idMembre" class="form-label">ID Membre :</label>
                     <input type="number" id="idMembre" name="idMembre" class="form-control" required>
@@ -62,6 +66,43 @@
                 </div>
                 <button type="submit" class="btn btn-primary">Ajouter Aide</button>
             </form>
+        </section>
+
+        <!-- Section Filtres et Tri pour les Aides -->
+        <section id="filtrer-trier" class="mt-4">
+            <h2>Filtrer et Trier les Aides</h2>
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <div>
+                    <button id="tri-montant" class="btn btn-secondary me-2">Trier par Montant</button>
+                    <button id="tri-date" class="btn btn-secondary me-2">Trier par Date</button>
+                    <button id="tri-statut" class="btn btn-secondary">Trier par Statut</button>
+                </div>
+                <div>
+                    <label for="filtre-statut" class="form-label">Filtrer par statut :</label>
+                    <select id="filtre-statut" class="form-select">
+                        <option value="">Tous les statuts</option>
+                        <option value="en attente">En attente</option>
+                        <option value="accordée">Accordée</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Tableau des Aides Triées/Filtrées -->
+            <table class="table table-striped mt-3">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Membre</th>
+                        <th>Montant</th>
+                        <th>Date</th>
+                        <th>Description</th>
+                        <th>Statut</th>
+                    </tr>
+                </thead>
+                <tbody id="liste-aides-filtrees">
+                    <!-- Les aides seront chargées ici via JavaScript -->
+                </tbody>
+            </table>
         </section>
     </main>
 

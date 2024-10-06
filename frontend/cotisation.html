@@ -1,5 +1,3 @@
-<!-- # Page pour la gestion des cotisations -->
-<!-- # Page pour la gestion des cotisations -->
 <!DOCTYPE html>
 <html lang="fr">
 
@@ -13,17 +11,20 @@
 </head>
 
 <body>
-    <header>
+    <header class="bg-light p-3 text-center">
         <h1>Gestion des Cotisations</h1>
         <nav>
-            <ul class="nav">
-                <li class="nav-item"><a class="nav-link" href="index.html">Retour au Tableau de Bord</a></li>
+            <ul class="nav justify-content-center">
+                <li class="nav-item">
+                    <a class="nav-link" href="index.html">Retour au Tableau de Bord</a>
+                </li>
             </ul>
         </nav>
     </header>
 
-    <main>
-        <section id="cotisations" class="container mt-4">
+    <main class="container mt-4">
+        <!-- Section Liste des Cotisations -->
+        <section id="cotisations">
             <h2>Liste des Cotisations</h2>
             <table class="table table-striped">
                 <thead>
@@ -41,9 +42,10 @@
             </table>
         </section>
 
-        <section id="ajouter-cotisation" class="container mt-4">
+        <!-- Section Ajouter une Cotisation -->
+        <section id="ajouter-cotisation" class="mt-4">
             <h2>Ajouter une Cotisation</h2>
-            <form id="form-cotisation">
+            <form id="form-cotisation" class="needs-validation" novalidate>
                 <div class="mb-3">
                     <label for="idMembre" class="form-label">ID Membre :</label>
                     <input type="number" id="idMembre" name="idMembre" class="form-control" required>
@@ -58,6 +60,42 @@
                 </div>
                 <button type="submit" class="btn btn-primary">Ajouter Cotisation</button>
             </form>
+        </section>
+
+        <!-- Section Filtres et Tri -->
+        <section id="filtrer-trier" class="mt-5">
+            <h2>Filtrer et Trier les Cotisations</h2>
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <div>
+                    <button id="tri-montant" class="btn btn-secondary me-2">Trier par Montant</button>
+                    <button id="tri-date" class="btn btn-secondary me-2">Trier par Date</button>
+                    <button id="tri-statut" class="btn btn-secondary">Trier par Statut</button>
+                </div>
+                <div>
+                    <label for="filtre-statut" class="form-label">Filtrer par statut :</label>
+                    <select id="filtre-statut" class="form-select">
+                        <option value="">Tous les statuts</option>
+                        <option value="en attente">En attente</option>
+                        <option value="réglée">Réglée</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Tableau des Cotisations Filtrées/Triées -->
+            <table class="table table-striped mt-3">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Membre</th>
+                        <th>Montant</th>
+                        <th>Date</th>
+                        <th>Statut</th>
+                    </tr>
+                </thead>
+                <tbody id="liste-cotisations-filtrees">
+                    <!-- Les cotisations seront chargées ici via JavaScript -->
+                </tbody>
+            </table>
         </section>
     </main>
 
