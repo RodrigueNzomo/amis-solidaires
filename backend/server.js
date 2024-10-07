@@ -8,129 +8,107 @@ const pretRoutes = require("./routes/pretRoutes");
 const aideRoutes = require("./routes/aideRoutes");
 const authRoutes = require("./routes/authRoutes");
 
-// Fonction pour ouvrir une base de données SQLite
-const openDatabase = (dbPath) => {
-  return new sqlite3.Database(dbPath, (err) => {
-    if (err) {
-      console.error(
-        "Erreur lors de l'ouverture de la base de données :",
-        err.message
-      );
-    } else {
-      console.log("Connexion réussie à la base de données SQLite.");
-    }
-  });
-};
-
-// Fonction pour créer les tables si elles n'existent pas
-const createMembresTableSQL = `
-  CREATE TABLE IF NOT EXISTS membres (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    nom TEXT NOT NULL,
-    prenom TEXT NOT NULL,
-    email TEXT NOT NULL,
-    telephone TEXT,
-    statut TEXT DEFAULT 'actif',
-    role TEXT NOT NULL DEFAULT 'membre',  -- Colonne 'role' avec valeur par défaut
-    password TEXT NOT NULL  -- Colonne pour le mot de passe
-  )
-`;
-
-const createCotisationsTableSQL = `
-  CREATE TABLE IF NOT EXISTS cotisations (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    membre_id INTEGER NOT NULL,
-    montant REAL NOT NULL,
-    date TEXT NOT NULL,
-    statut TEXT NOT NULL DEFAULT 'en attente',
-    FOREIGN KEY (membre_id) REFERENCES membres(id)
-  )
-`;
-
-const createPretsTableSQL = `
-  CREATE TABLE IF NOT EXISTS prets (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    membre_id INTEGER NOT NULL,
-    montant REAL NOT NULL,
-    date TEXT NOT NULL,
-    statut TEXT NOT NULL DEFAULT 'en cours',
-    FOREIGN KEY (membre_id) REFERENCES membres(id)
-  )
-`;
-
-const createAidesTableSQL = `
-  CREATE TABLE IF NOT EXISTS aides (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    membre_id INTEGER NOT NULL,
-    montant REAL NOT NULL,
-    date TEXT NOT NULL,
-    description TEXT,
-    statut TEXT NOT NULL DEFAULT 'en attente',
-    FOREIGN KEY (membre_id) REFERENCES membres(id)
-  )
-`;
-
-// Création des tables
-db.run(createMembresTableSQL, (err) => {
-  if (err) {
-    console.error(
-      "Erreur lors de la création de la table 'membres' :",
-      err.message
-    );
-  } else {
-    console.log('Table "membres" créée avec succès.');
-  }
-});
-
-db.run(createCotisationsTableSQL, (err) => {
-  if (err) {
-    console.error(
-      "Erreur lors de la création de la table 'cotisations' :",
-      err.message
-    );
-  } else {
-    console.log('Table "cotisations" créée avec succès.');
-  }
-});
-
-db.run(createPretsTableSQL, (err) => {
-  if (err) {
-    console.error(
-      "Erreur lors de la création de la table 'prets' :",
-      err.message
-    );
-  } else {
-    console.log('Table "prets" créée avec succès.');
-  }
-});
-
-db.run(createAidesTableSQL, (err) => {
-  if (err) {
-    console.error(
-      "Erreur lors de la création de la table 'aides' :",
-      err.message
-    );
-  } else {
-    console.log('Table "aides" créée avec succès.');
-  }
-});
-
 // Initialisation de l'application Express
 const app = express();
 
 // Middleware pour analyser les requêtes en JSON
-app.use(express.json()); // Utilisation de express.json() au lieu de body-parser
+app.use(express.json());
 
-// Utilisation des routes pour les membres, cotisations, prêts, aides, et authentification
+// Création des tables SQL
+const SQL_TABLES = {
+  membres: `
+    CREATE TABLE IF NOT EXISTS membres (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      nom TEXT NOT NULL,
+      prenom TEXT NOT NULL,
+      email TEXT UNIQUE NOT NULL,
+      telephone TEXT,
+      statut TEXT DEFAULT 'actif',
+      role TEXT NOT NULL DEFAULT 'membre',
+      password TEXT NOT NULL,
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    )
+  `,
+  cotisations: `
+    CREATE TABLE IF NOT EXISTS cotisations (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      membre_id INTEGER NOT NULL,
+      montant REAL NOT NULL,
+      date TEXT NOT NULL,
+      statut TEXT NOT NULL DEFAULT 'en attente',
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+      FOREIGN KEY (membre_id) REFERENCES membres(id)
+    )
+  `,
+  prets: `
+    CREATE TABLE IF NOT EXISTS prets (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      membre_id INTEGER NOT NULL,
+      montant REAL NOT NULL,
+      date TEXT NOT NULL,
+      statut TEXT NOT NULL DEFAULT 'en cours',
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+      FOREIGN KEY (membre_id) REFERENCES membres(id)
+    )
+  `,
+  aides: `
+    CREATE TABLE IF NOT EXISTS aides (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      membre_id INTEGER NOT NULL,
+      montant REAL NOT NULL,
+      date TEXT NOT NULL,
+      description TEXT,
+      statut TEXT NOT NULL DEFAULT 'en attente',
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+      FOREIGN KEY (membre_id) REFERENCES membres(id)
+    )
+  `,
+};
+
+// Fonction pour initialiser la base de données
+const initializeDatabase = () => {
+  const db = new sqlite3.Database("./database.sqlite", (err) => {
+    if (err) {
+      console.error("Erreur de connexion à la base de données:", err.message);
+      process.exit(1);
+    }
+    console.log("Connexion réussie à la base de données SQLite");
+  });
+
+  // Création séquentielle des tables
+  db.serialize(() => {
+    Object.entries(SQL_TABLES).forEach(([tableName, sql]) => {
+      db.run(sql, (err) => {
+        if (err) {
+          console.error(
+            `Erreur lors de la création de la table ${tableName}:`,
+            err.message
+          );
+        } else {
+          console.log(`Table "${tableName}" créée avec succès`);
+        }
+      });
+    });
+  });
+
+  return db;
+};
+
+// Initialisation de la base de données
+const db = initializeDatabase();
+
+// Middleware pour rendre la base de données disponible dans les requêtes
+app.use((req, res, next) => {
+  req.db = db;
+  next();
+});
+
+// Routes API
 app.use("/api/membres", membreRoutes);
 app.use("/api/cotisations", cotisationRoutes);
 app.use("/api/prets", pretRoutes);
 app.use("/api/aides", aideRoutes);
-app.use("/api/auth", authRoutes); // Modification correcte pour /api/auth
-
-// Démarrer la base de données et créer les tables
-const db = openDatabase("./database.sqlite");
-createTables(db);
+app.use("/api/auth", authRoutes);
 
 // Middleware pour gérer les erreurs 404
 app.use((req, res, next) => {
@@ -140,18 +118,32 @@ app.use((req, res, next) => {
   });
 });
 
-// Démarrer le serveur sur le port 4000
+// Middleware de gestion globale des erreurs
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(err.status || 500).json({
+    status: "error",
+    message: err.message || "Une erreur interne est survenue",
+  });
+});
+
+// Gestionnaire d'arrêt propre
+process.on("SIGINT", () => {
+  db.close((err) => {
+    if (err) {
+      console.error(
+        "Erreur lors de la fermeture de la base de données:",
+        err.message
+      );
+    } else {
+      console.log("Connexion à la base de données fermée.");
+    }
+    process.exit(err ? 1 : 0);
+  });
+});
+
+// Démarrage du serveur
 const PORT = process.env.PORT || 4000;
 app.listen(PORT, () => {
   console.log(`Serveur démarré sur le port ${PORT}`);
-});
-db.close((err) => {
-  if (err) {
-    console.error(
-      "Erreur lors de la fermeture de la base de données :",
-      err.message
-    );
-  } else {
-    console.log("Connexion à la base de données fermée.");
-  }
 });
