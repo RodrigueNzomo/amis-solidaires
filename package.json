@@ -1,11 +1,11 @@
 {
   "name": "amis-solidaires",
   "version": "1.0.0",
-  "description": "Voici un exemple d'un fichier **README.md** optimal et détaillé pour ton projet **\"Amis Solidaires\"**. Ce fichier inclut des sections clés pour documenter ton projet, les technologies utilisées, les instructions d'installation, et la manière de contribuer.",
+  "description": "Exemple d'un fichier **README.md** optimal et détaillé pour le projet **\"Amis Solidaires\"**. Ce fichier inclut des sections clés pour documenter le projet, les technologies utilisées, les instructions d'installation, et la manière de contribuer.",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js",  // Ajout du script pour démarrer le serveur
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node server.js",  
+    "test": "echo \"Erreur : aucun test spécifié\" && exit 1"
   },
   "keywords": [],
   "author": "",
