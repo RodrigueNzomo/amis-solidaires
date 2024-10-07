@@ -36,86 +36,84 @@ const createMembresTableSQL = `
   )
 `;
 
+const createCotisationsTableSQL = `
+  CREATE TABLE IF NOT EXISTS cotisations (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    membre_id INTEGER NOT NULL,
+    montant REAL NOT NULL,
+    date TEXT NOT NULL,
+    statut TEXT NOT NULL DEFAULT 'en attente',
+    FOREIGN KEY (membre_id) REFERENCES membres(id)
+  )
+`;
 
-  const createCotisationsTableSQL = `
-    CREATE TABLE IF NOT EXISTS cotisations (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      membre_id INTEGER NOT NULL,
-      montant REAL NOT NULL,
-      date TEXT NOT NULL,
-      statut TEXT NOT NULL DEFAULT 'en attente',
-      FOREIGN KEY (membre_id) REFERENCES membres(id)
-    )
-  `;
+const createPretsTableSQL = `
+  CREATE TABLE IF NOT EXISTS prets (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    membre_id INTEGER NOT NULL,
+    montant REAL NOT NULL,
+    date TEXT NOT NULL,
+    statut TEXT NOT NULL DEFAULT 'en cours',
+    FOREIGN KEY (membre_id) REFERENCES membres(id)
+  )
+`;
 
-  const createPretsTableSQL = `
-    CREATE TABLE IF NOT EXISTS prets (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      membre_id INTEGER NOT NULL,
-      montant REAL NOT NULL,
-      date TEXT NOT NULL,
-      statut TEXT NOT NULL DEFAULT 'en cours',
-      FOREIGN KEY (membre_id) REFERENCES membres(id)
-    )
-  `;
+const createAidesTableSQL = `
+  CREATE TABLE IF NOT EXISTS aides (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    membre_id INTEGER NOT NULL,
+    montant REAL NOT NULL,
+    date TEXT NOT NULL,
+    description TEXT,
+    statut TEXT NOT NULL DEFAULT 'en attente',
+    FOREIGN KEY (membre_id) REFERENCES membres(id)
+  )
+`;
 
-  const createAidesTableSQL = `
-    CREATE TABLE IF NOT EXISTS aides (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      membre_id INTEGER NOT NULL,
-      montant REAL NOT NULL,
-      date TEXT NOT NULL,
-      description TEXT,
-      statut TEXT NOT NULL DEFAULT 'en attente',
-      FOREIGN KEY (membre_id) REFERENCES membres(id)
-    )
-  `;
+// Création des tables
+db.run(createMembresTableSQL, (err) => {
+  if (err) {
+    console.error(
+      "Erreur lors de la création de la table 'membres' :",
+      err.message
+    );
+  } else {
+    console.log('Table "membres" créée avec succès.');
+  }
+});
 
-  // Création des tables
-  db.run(createMembresTableSQL, (err) => {
-    if (err) {
-      console.error(
-        "Erreur lors de la création de la table 'membres' :",
-        err.message
-      );
-    } else {
-      console.log('Table "membres" créée avec succès.');
-    }
-  });
+db.run(createCotisationsTableSQL, (err) => {
+  if (err) {
+    console.error(
+      "Erreur lors de la création de la table 'cotisations' :",
+      err.message
+    );
+  } else {
+    console.log('Table "cotisations" créée avec succès.');
+  }
+});
 
-  db.run(createCotisationsTableSQL, (err) => {
-    if (err) {
-      console.error(
-        "Erreur lors de la création de la table 'cotisations' :",
-        err.message
-      );
-    } else {
-      console.log('Table "cotisations" créée avec succès.');
-    }
-  });
+db.run(createPretsTableSQL, (err) => {
+  if (err) {
+    console.error(
+      "Erreur lors de la création de la table 'prets' :",
+      err.message
+    );
+  } else {
+    console.log('Table "prets" créée avec succès.');
+  }
+});
 
-  db.run(createPretsTableSQL, (err) => {
-    if (err) {
-      console.error(
-        "Erreur lors de la création de la table 'prets' :",
-        err.message
-      );
-    } else {
-      console.log('Table "prets" créée avec succès.');
-    }
-  });
-
-  db.run(createAidesTableSQL, (err) => {
-    if (err) {
-      console.error(
-        "Erreur lors de la création de la table 'aides' :",
-        err.message
-      );
-    } else {
-      console.log('Table "aides" créée avec succès.');
-    }
-  });
-};
+db.run(createAidesTableSQL, (err) => {
+  if (err) {
+    console.error(
+      "Erreur lors de la création de la table 'aides' :",
+      err.message
+    );
+  } else {
+    console.log('Table "aides" créée avec succès.');
+  }
+});
 
 // Initialisation de l'application Express
 const app = express();
