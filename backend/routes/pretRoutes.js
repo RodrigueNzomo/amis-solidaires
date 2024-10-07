@@ -1,34 +1,30 @@
-const express = require("express");
-const router = express.Router();
-const pretController = require("../controllers/pretController");
-const verifierToken = require("../middlewares/authMiddleware");
-const verifierRole = require("../middlewares/roleMiddleware");
+// controllers/pretController.js
+const db = require("../models/pretModel");
 
-// Routes CRUD pour les prêts avec protection JWT et gestion des rôles
-router
-  .route("/")
-  .get(
-    verifierToken,
-    verifierRole(["president", "tresorier"]),
-    pretController.listerPrets // Cette ligne doit faire référence à une fonction, pas un objet.
-  )
-  .post(
-    verifierToken,
-    verifierRole(["tresorier"]),
-    pretController.creerPret // Assurez-vous que pretController.creerPret est une fonction
-  );
+exports.listerPrets = (req, res) => {
+  const sql = "SELECT * FROM prets";
 
-router
-  .route("/:id")
-  .put(
-    verifierToken,
-    verifierRole(["tresorier"]),
-    pretController.modifierPret // Vérifiez que modifierPret est une fonction
-  )
-  .delete(
-    verifierToken,
-    verifierRole(["president"]),
-    pretController.supprimerPret // Vérifiez que supprimerPret est une fonction
-  );
+  db.all(sql, [], (err, rows) => {
+    if (err) {
+      return res.status(500).json({
+        status: "error",
+        message: "Erreur lors de la récupération des prêts",
+        error: err.message,
+      });
+    }
 
-module.exports = router;
+    if (rows.length === 0) {
+      return res.status(404).json({
+        status: "fail",
+        message: "Aucun prêt trouvé",
+      });
+    }
+
+    res.status(200).json({
+      status: "success",
+      data: rows,
+    });
+  });
+};
+
+// Les autres méthodes du contrôleur ici...

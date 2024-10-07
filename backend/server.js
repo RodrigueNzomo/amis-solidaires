@@ -7,12 +7,29 @@ const cotisationRoutes = require("./routes/cotisationRoutes");
 const pretRoutes = require("./routes/pretRoutes");
 const aideRoutes = require("./routes/aideRoutes");
 const authRoutes = require("./routes/authRoutes");
+const cookieParser = require("cookie-parser");
+app.use(cookieParser());
+const fs = require("fs").promises;
+fs.rmdir("./path-to-delete", { recursive: true })
+  .then(() => console.log("Deleted!"))
+  .catch((err) => console.error("Error:", err));
+const fg = require("fast-glob");
+const files = fg.sync(["**/*.js"]);
+console.log(files);
+const winston = require("winston");
+const logger = winston.createLogger({
+  level: "info",
+  format: winston.format.json(),
+  transports: [new winston.transports.Console()],
+});
+logger.info("Hello, Winston!");
 
 // Initialisation de l'application Express
 const app = express();
 
 // Middleware pour analyser les requêtes en JSON
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 // Création des tables SQL
 const SQL_TABLES = {
