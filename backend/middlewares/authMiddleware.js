@@ -2,20 +2,22 @@ const jwt = require("jsonwebtoken");
 
 // Middleware pour vérifier le token JWT
 const verifierToken = (req, res, next) => {
-  const authHeader = req.headers["authorization"]; // Récupérer l'en-tête Authorization
+  // Vérification dans les en-têtes ou les cookies (si pertinent)
+  const authHeader = req.headers["authorization"];
+  const token =
+    authHeader && authHeader.startsWith("Bearer ")
+      ? authHeader.split(" ")[1]
+      : null;
 
-  // Vérifier si l'en-tête contient un token Bearer
-  if (!authHeader || !authHeader.startsWith("Bearer ")) {
+  // Si aucun token n'est trouvé
+  if (!token) {
     return res.status(403).json({
       status: "fail",
       message: "Un token valide est requis pour l'authentification",
     });
   }
 
-  // Extraire le token de l'en-tête
-  const token = authHeader.split(" ")[1];
-
-  // Vérifier la validité du token
+  // Vérifier la validité du token JWT
   jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
     if (err) {
       if (err.name === "TokenExpiredError") {
@@ -30,7 +32,7 @@ const verifierToken = (req, res, next) => {
       });
     }
 
-    // Stocker les informations du token décodé dans req.user
+    // Stocker les informations décodées du token dans req.user
     req.user = decoded;
     next(); // Passer au middleware suivant
   });

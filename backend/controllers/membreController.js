@@ -5,30 +5,32 @@ const bcrypt = require("bcrypt");
 const db = new sqlite3.Database("./database.sqlite");
 const SALT_ROUNDS = 10;
 
-// Utilitaires
-const asyncQuery = (query, params = []) => {
+// Fonction utilitaire pour exécuter des requêtes SQL (async)
+const asyncRun = (sql, params = []) => {
   return new Promise((resolve, reject) => {
-    db.all(query, params, (error, rows) => {
-      if (error) reject(error);
-      else resolve(rows);
-    });
-  });
-};
-
-const asyncRun = (query, params = []) => {
-  return new Promise((resolve, reject) => {
-    db.run(query, params, function (error) {
-      if (error) reject(error);
+    db.run(sql, params, function (err) {
+      if (err) reject(err);
       else resolve({ lastID: this.lastID, changes: this.changes });
     });
   });
 };
 
+// Fonction utilitaire pour récupérer des données SQL (async)
+const asyncAll = (sql, params = []) => {
+  return new Promise((resolve, reject) => {
+    db.all(sql, params, (err, rows) => {
+      if (err) reject(err);
+      else resolve(rows);
+    });
+  });
+};
+
+// Hashage des mots de passe
 const hashPassword = async (password) => {
   return await bcrypt.hash(password, SALT_ROUNDS);
 };
 
-// Gestionnaire de réponses
+// Gestionnaire des réponses
 const sendResponse = (
   res,
   { status = 200, success = true, message = "", data = null }
@@ -45,8 +47,7 @@ class MembreController {
   // Lister tous les membres
   async listerMembres(req, res) {
     try {
-      const membres = await asyncQuery("SELECT * FROM membres");
-
+      const membres = await asyncAll("SELECT * FROM membres");
       if (!membres.length) {
         return sendResponse(res, {
           status: 404,
@@ -54,16 +55,13 @@ class MembreController {
           message: "Aucun membre trouvé",
         });
       }
-
-      sendResponse(res, {
-        data: membres,
-      });
-    } catch (error) {
+      sendResponse(res, { data: membres });
+    } catch (err) {
       sendResponse(res, {
         status: 500,
         success: false,
         message: "Erreur lors de la récupération des membres",
-        error: error.message,
+        error: err.message,
       });
     }
   }
@@ -76,12 +74,10 @@ class MembreController {
         prenom,
         email,
         telephone,
-        statut = "actif",
         role = "membre",
         password,
       } = req.body;
 
-      // Validation des champs requis
       if (!nom || !prenom || !email || !password) {
         return sendResponse(res, {
           status: 400,
@@ -93,29 +89,20 @@ class MembreController {
       const hashedPassword = await hashPassword(password);
 
       const { lastID } = await asyncRun(
-        `INSERT INTO membres (nom, prenom, email, telephone, statut, role, password) 
-         VALUES (?, ?, ?, ?, ?, ?, ?)`,
-        [nom, prenom, email, telephone, statut, role, hashedPassword]
+        `INSERT INTO membres (nom, prenom, email, telephone, role, password) VALUES (?, ?, ?, ?, ?, ?)`,
+        [nom, prenom, email, telephone, role, hashedPassword]
       );
 
       sendResponse(res, {
         status: 201,
-        data: {
-          id: lastID,
-          nom,
-          prenom,
-          email,
-          telephone,
-          statut,
-          role,
-        },
+        data: { id: lastID, nom, prenom, email, telephone, role },
       });
-    } catch (error) {
+    } catch (err) {
       sendResponse(res, {
         status: 500,
         success: false,
         message: "Erreur lors de la création du membre",
-        error: error.message,
+        error: err.message,
       });
     }
   }
@@ -123,8 +110,7 @@ class MembreController {
   // Modifier un membre
   async modifierMembre(req, res) {
     try {
-      const { nom, prenom, email, telephone, statut, role, password } =
-        req.body;
+      const { nom, prenom, email, telephone, role, password } = req.body;
       const id = parseInt(req.params.id);
 
       if (!nom || !prenom || !email) {
@@ -141,11 +127,8 @@ class MembreController {
       }
 
       const { changes } = await asyncRun(
-        `UPDATE membres 
-         SET nom = ?, prenom = ?, email = ?, telephone = ?, 
-             statut = ?, role = ?, password = COALESCE(?, password)
-         WHERE id = ?`,
-        [nom, prenom, email, telephone, statut, role, hashedPassword, id]
+        `UPDATE membres SET nom = ?, prenom = ?, email = ?, telephone = ?, role = ?, password = COALESCE(?, password) WHERE id = ?`,
+        [nom, prenom, email, telephone, role, hashedPassword, id]
       );
 
       if (changes === 0) {
@@ -156,15 +139,13 @@ class MembreController {
         });
       }
 
-      sendResponse(res, {
-        data: { id, nom, prenom, email, telephone, statut, role },
-      });
-    } catch (error) {
+      sendResponse(res, { data: { id, nom, prenom, email, telephone, role } });
+    } catch (err) {
       sendResponse(res, {
         status: 500,
         success: false,
         message: "Erreur lors de la modification du membre",
-        error: error.message,
+        error: err.message,
       });
     }
   }
@@ -186,15 +167,13 @@ class MembreController {
         });
       }
 
-      sendResponse(res, {
-        status: 204,
-      });
-    } catch (error) {
+      sendResponse(res, { status: 204 });
+    } catch (err) {
       sendResponse(res, {
         status: 500,
         success: false,
         message: "Erreur lors de la suppression du membre",
-        error: error.message,
+        error: err.message,
       });
     }
   }

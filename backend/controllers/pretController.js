@@ -1,27 +1,40 @@
 const db = require("../models/pretModel");
 
+// Utilitaire pour envoyer des réponses standardisées
+const sendResponse = (
+  res,
+  { status = 200, success = true, message = "", data = null }
+) => {
+  res.status(status).json({
+    status: success ? "success" : "fail",
+    message,
+    data: data || undefined,
+  });
+};
+
 // Lister tous les prêts
 exports.listerPrets = (req, res) => {
   const sql = "SELECT * FROM prets";
 
   db.all(sql, [], (err, rows) => {
     if (err) {
-      return res.status(500).json({
-        status: "error",
+      return sendResponse(res, {
+        status: 500,
+        success: false,
         message: "Erreur lors de la récupération des prêts",
-        error: err.message,
+        data: err.message,
       });
     }
 
     if (rows.length === 0) {
-      return res.status(404).json({
-        status: "fail",
+      return sendResponse(res, {
+        status: 404,
+        success: false,
         message: "Aucun prêt trouvé",
       });
     }
 
-    res.status(200).json({
-      status: "success",
+    sendResponse(res, {
       data: rows,
     });
   });
@@ -33,8 +46,9 @@ exports.creerPret = (req, res) => {
 
   // Vérification des données obligatoires
   if (!membre_id || !montant || !date_debut || !date_fin) {
-    return res.status(400).json({
-      status: "fail",
+    return sendResponse(res, {
+      status: 400,
+      success: false,
       message:
         "Le membre, le montant, la date de début et la date de fin sont obligatoires",
     });
@@ -53,16 +67,17 @@ exports.creerPret = (req, res) => {
 
   db.run(sql, params, function (err) {
     if (err) {
-      return res.status(500).json({
-        status: "error",
+      return sendResponse(res, {
+        status: 500,
+        success: false,
         message: "Erreur lors de la création du prêt",
-        error: err.message,
+        data: err.message,
       });
     }
 
     // Renvoi du prêt créé avec succès
-    res.status(201).json({
-      status: "success",
+    sendResponse(res, {
+      status: 201,
       data: {
         id: this.lastID,
         membre_id,
@@ -85,16 +100,18 @@ exports.modifierPret = (req, res) => {
   const id = parseInt(req.params.id, 10);
 
   if (isNaN(id)) {
-    return res.status(400).json({
-      status: "fail",
+    return sendResponse(res, {
+      status: 400,
+      success: false,
       message: "ID invalide",
     });
   }
 
   // Vérification des données obligatoires
   if (!membre_id || !montant || !date_debut || !date_fin || !statut) {
-    return res.status(400).json({
-      status: "fail",
+    return sendResponse(res, {
+      status: 400,
+      success: false,
       message:
         "Le membre, le montant, les dates et le statut sont obligatoires",
     });
@@ -113,22 +130,23 @@ exports.modifierPret = (req, res) => {
 
   db.run(sql, params, function (err) {
     if (err) {
-      return res.status(500).json({
-        status: "error",
+      return sendResponse(res, {
+        status: 500,
+        success: false,
         message: "Erreur lors de la modification du prêt",
-        error: err.message,
+        data: err.message,
       });
     }
 
     if (this.changes === 0) {
-      return res.status(404).json({
-        status: "fail",
+      return sendResponse(res, {
+        status: 404,
+        success: false,
         message: `Prêt avec l'ID ${id} non trouvé`,
       });
     }
 
-    res.status(200).json({
-      status: "success",
+    sendResponse(res, {
       data: {
         id,
         membre_id,
@@ -147,8 +165,9 @@ exports.supprimerPret = (req, res) => {
   const id = parseInt(req.params.id, 10); // Validation pour convertir l'ID en entier
 
   if (isNaN(id)) {
-    return res.status(400).json({
-      status: "fail",
+    return sendResponse(res, {
+      status: 400,
+      success: false,
       message: "ID invalide",
     });
   }
@@ -157,21 +176,25 @@ exports.supprimerPret = (req, res) => {
 
   db.run(sql, id, function (err) {
     if (err) {
-      return res.status(500).json({
-        status: "error",
+      return sendResponse(res, {
+        status: 500,
+        success: false,
         message: "Erreur lors de la suppression du prêt",
-        error: err.message,
+        data: err.message,
       });
     }
 
     // Si aucun prêt n'a été supprimé
     if (this.changes === 0) {
-      return res.status(404).json({
-        status: "fail",
+      return sendResponse(res, {
+        status: 404,
+        success: false,
         message: `Prêt avec l'ID ${id} non trouvé`,
       });
     }
 
-    res.status(204).send(); // Succès, aucun contenu à retourner
+    sendResponse(res, {
+      status: 204,
+    }); // Succès, aucun contenu à retourner
   });
 };
