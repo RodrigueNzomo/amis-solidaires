@@ -4,13 +4,14 @@
   "description": "Exemple d'un fichier **README.md** optimal et détaillé pour le projet **\"Amis Solidaires\"**. Ce fichier inclut des sections clés pour documenter le projet, les technologies utilisées, les instructions d'installation, et la manière de contribuer.",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js",  
+    "start": "node server.js",
     "test": "echo \"Erreur : aucun test spécifié\" && exit 1"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "bcrypt": "^5.1.1",
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.20.3",
     "express": "^4.21.0",

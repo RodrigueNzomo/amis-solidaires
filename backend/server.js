@@ -1,7 +1,6 @@
 // Importer les modules nécessaires
 const express = require("express");
-const bodyParser = require("body-parser");
-const bcrypt = require("bcrypt");
+const bcrypt = require("bcryptjs");
 const sqlite3 = require("sqlite3").verbose();
 const membreRoutes = require("./routes/membreRoutes");
 const cotisationRoutes = require("./routes/cotisationRoutes");
@@ -31,7 +30,7 @@ const createTables = (db) => {
       nom TEXT NOT NULL,
       prenom TEXT NOT NULL,
       email TEXT NOT NULL,
-      password TEXT NOT NULL,  -- Ajout de la colonne pour le mot de passe
+      password TEXT NOT NULL, -- Colonne pour le mot de passe hashé
       telephone TEXT,
       statut TEXT DEFAULT 'actif'
     )
@@ -121,14 +120,14 @@ const createTables = (db) => {
 const app = express();
 
 // Middleware pour analyser les requêtes en JSON
-app.use(bodyParser.json());
+app.use(express.json()); // Utilisation de express.json() au lieu de body-parser
 
 // Utilisation des routes pour les membres, cotisations, prêts, aides, et authentification
 app.use("/api/membres", membreRoutes);
 app.use("/api/cotisations", cotisationRoutes);
 app.use("/api/prets", pretRoutes);
 app.use("/api/aides", aideRoutes);
-app.use("/api/auth/login", authRoutes); // Route pour la gestion de l'authentification
+app.use("/api/auth", authRoutes); // Modification correcte pour /api/auth
 
 // Démarrer la base de données et créer les tables
 const db = openDatabase("./database.sqlite");
