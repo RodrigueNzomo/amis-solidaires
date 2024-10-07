@@ -17,7 +17,6 @@ router.post(
   verifierRole(["tresorier"]),
   aideController.creerAide
 );
-
 router.put(
   "/:id",
   verifierToken,
