@@ -145,3 +145,13 @@ const PORT = process.env.PORT || 4000;
 app.listen(PORT, () => {
   console.log(`Serveur démarré sur le port ${PORT}`);
 });
+db.close((err) => {
+  if (err) {
+    console.error(
+      "Erreur lors de la fermeture de la base de données :",
+      err.message
+    );
+  } else {
+    console.log("Connexion à la base de données fermée.");
+  }
+});
