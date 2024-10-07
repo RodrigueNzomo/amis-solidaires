@@ -1,7 +1,6 @@
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const sqlite3 = require("sqlite3").verbose();
-
 const db = new sqlite3.Database("./database.sqlite");
 
 exports.login = (req, res) => {
@@ -12,41 +11,33 @@ exports.login = (req, res) => {
   }
 
   const sql = "SELECT * FROM membres WHERE email = ?";
-  db.get(sql, [email], (err, user) => {
+  db.get(sql, [email], (err, membre) => {
     if (err) {
-      return res
-        .status(500)
-        .json({ message: "Erreur lors de la vérification des identifiants" });
+      return res.status(500).json({ message: "Erreur de serveur" });
     }
 
-    if (!user) {
-      return res
-        .status(401)
-        .json({ message: "Email ou mot de passe incorrect" });
+    if (!membre) {
+      return res.status(404).json({ message: "Utilisateur non trouvé" });
     }
 
-    // Vérification du mot de passe avec bcrypt
-    bcrypt.compare(password, user.password, (err, isMatch) => {
-      if (err || !isMatch) {
+    bcrypt.compare(password, membre.password, (err, match) => {
+      if (err) {
         return res
-          .status(401)
-          .json({ message: "Email ou mot de passe incorrect" });
+          .status(500)
+          .json({ message: "Erreur de vérification du mot de passe" });
       }
 
-      // Génération du token JWT
+      if (!match) {
+        return res.status(401).json({ message: "Mot de passe incorrect" });
+      }
+
       const token = jwt.sign(
-        { id: user.id, role: user.role },
-        process.env.JWT_SECRET || "secret",
-        {
-          expiresIn: "1h",
-        }
+        { id: membre.id, role: membre.role },
+        process.env.JWT_SECRET,
+        { expiresIn: "1h" }
       );
 
-      res.json({
-        message: "Connexion réussie",
-        token,
-        user: { id: user.id, email: user.email, role: user.role },
-      });
+      res.json({ token, message: "Connexion réussie" });
     });
   });
 };
