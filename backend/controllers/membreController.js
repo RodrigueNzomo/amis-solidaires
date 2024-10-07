@@ -1,173 +1,203 @@
 const sqlite3 = require("sqlite3").verbose();
-const db = new sqlite3.Database("./database.sqlite");
 const bcrypt = require("bcrypt");
 
-// Lister tous les membres
-exports.listerMembres = (req, res) => {
-  const sql = "SELECT * FROM membres";
-  db.all(sql, [], (err, rows) => {
-    if (err) {
-      return res.status(500).json({
-        status: "error",
-        message: "Erreur lors de la récupération des membres",
-        error: err.message,
-      });
-    }
+// Configuration de la base de données
+const db = new sqlite3.Database("./database.sqlite");
+const SALT_ROUNDS = 10;
 
-    res.status(rows.length ? 200 : 404).json({
-      status: rows.length ? "success" : "fail",
-      message: rows.length ? undefined : "Aucun membre trouvé",
-      data: rows.length ? rows : undefined,
+// Utilitaires
+const asyncQuery = (query, params = []) => {
+  return new Promise((resolve, reject) => {
+    db.all(query, params, (error, rows) => {
+      if (error) reject(error);
+      else resolve(rows);
     });
   });
 };
 
-// Créer un membre avec validation et hashage du mot de passe
-exports.creerMembre = (req, res) => {
-  const { nom, prenom, email, telephone, statut, role, password } = req.body;
-
-  if (!nom || !prenom || !email || !password) {
-    return res.status(400).json({
-      status: "fail",
-      message: "Nom, prénom, email, et mot de passe sont obligatoires",
+const asyncRun = (query, params = []) => {
+  return new Promise((resolve, reject) => {
+    db.run(query, params, function (error) {
+      if (error) reject(error);
+      else resolve({ lastID: this.lastID, changes: this.changes });
     });
-  }
+  });
+};
 
-  // Hashage du mot de passe
-  bcrypt.hash(password, 10, (err, hashedPassword) => {
-    if (err) {
-      return res.status(500).json({
-        status: "error",
-        message: "Erreur lors du hashage du mot de passe",
-        error: err.message,
-      });
-    }
+const hashPassword = async (password) => {
+  return await bcrypt.hash(password, SALT_ROUNDS);
+};
 
-    const sql = `INSERT INTO membres (nom, prenom, email, telephone, statut, role, password) 
-                 VALUES (?, ?, ?, ?, ?, ?, ?)`;
-    const params = [
-      nom,
-      prenom,
-      email,
-      telephone,
-      statut || "actif",
-      role || "membre",
-      hashedPassword,
-    ];
+// Gestionnaire de réponses
+const sendResponse = (
+  res,
+  { status = 200, success = true, message = "", data = null }
+) => {
+  res.status(status).json({
+    status: success ? "success" : "fail",
+    message,
+    data: data || undefined,
+  });
+};
 
-    db.run(sql, params, function (err) {
-      if (err) {
-        return res.status(500).json({
-          status: "error",
-          message: "Erreur lors de la création du membre",
-          error: err.message,
+// Contrôleur des membres
+class MembreController {
+  // Lister tous les membres
+  async listerMembres(req, res) {
+    try {
+      const membres = await asyncQuery("SELECT * FROM membres");
+
+      if (!membres.length) {
+        return sendResponse(res, {
+          status: 404,
+          success: false,
+          message: "Aucun membre trouvé",
         });
       }
 
-      res.status(201).json({
-        status: "success",
+      sendResponse(res, {
+        data: membres,
+      });
+    } catch (error) {
+      sendResponse(res, {
+        status: 500,
+        success: false,
+        message: "Erreur lors de la récupération des membres",
+        error: error.message,
+      });
+    }
+  }
+
+  // Créer un membre
+  async creerMembre(req, res) {
+    try {
+      const {
+        nom,
+        prenom,
+        email,
+        telephone,
+        statut = "actif",
+        role = "membre",
+        password,
+      } = req.body;
+
+      // Validation des champs requis
+      if (!nom || !prenom || !email || !password) {
+        return sendResponse(res, {
+          status: 400,
+          success: false,
+          message: "Nom, prénom, email, et mot de passe sont obligatoires",
+        });
+      }
+
+      const hashedPassword = await hashPassword(password);
+
+      const { lastID } = await asyncRun(
+        `INSERT INTO membres (nom, prenom, email, telephone, statut, role, password) 
+         VALUES (?, ?, ?, ?, ?, ?, ?)`,
+        [nom, prenom, email, telephone, statut, role, hashedPassword]
+      );
+
+      sendResponse(res, {
+        status: 201,
         data: {
-          id: this.lastID,
+          id: lastID,
           nom,
           prenom,
           email,
           telephone,
-          statut: statut || "actif",
-          role: role || "membre",
+          statut,
+          role,
         },
       });
-    });
-  });
-};
-
-// Modifier un membre avec validation
-exports.modifierMembre = (req, res) => {
-  const { nom, prenom, email, telephone, statut, role, password } = req.body;
-  const id = parseInt(req.params.id);
-
-  if (!nom || !prenom || !email) {
-    return res.status(400).json({
-      status: "fail",
-      message: "Nom, prénom, et email sont obligatoires",
-    });
+    } catch (error) {
+      sendResponse(res, {
+        status: 500,
+        success: false,
+        message: "Erreur lors de la création du membre",
+        error: error.message,
+      });
+    }
   }
 
-  const updateMember = (hashedPassword = null) => {
-    const sql = `UPDATE membres 
-                 SET nom = ?, prenom = ?, email = ?, telephone = ?, statut = ?, role = ?, password = COALESCE(?, password)
-                 WHERE id = ?`;
-    const params = [
-      nom,
-      prenom,
-      email,
-      telephone,
-      statut,
-      role,
-      hashedPassword,
-      id,
-    ];
+  // Modifier un membre
+  async modifierMembre(req, res) {
+    try {
+      const { nom, prenom, email, telephone, statut, role, password } =
+        req.body;
+      const id = parseInt(req.params.id);
 
-    db.run(sql, params, function (err) {
-      if (err) {
-        return res.status(500).json({
-          status: "error",
-          message: "Erreur lors de la modification du membre",
-          error: err.message,
+      if (!nom || !prenom || !email) {
+        return sendResponse(res, {
+          status: 400,
+          success: false,
+          message: "Nom, prénom, et email sont obligatoires",
         });
       }
 
-      if (this.changes === 0) {
-        return res.status(404).json({
-          status: "fail",
+      let hashedPassword = null;
+      if (password) {
+        hashedPassword = await hashPassword(password);
+      }
+
+      const { changes } = await asyncRun(
+        `UPDATE membres 
+         SET nom = ?, prenom = ?, email = ?, telephone = ?, 
+             statut = ?, role = ?, password = COALESCE(?, password)
+         WHERE id = ?`,
+        [nom, prenom, email, telephone, statut, role, hashedPassword, id]
+      );
+
+      if (changes === 0) {
+        return sendResponse(res, {
+          status: 404,
+          success: false,
           message: `Membre avec l'ID ${id} non trouvé`,
         });
       }
 
-      res.status(200).json({
-        status: "success",
+      sendResponse(res, {
         data: { id, nom, prenom, email, telephone, statut, role },
       });
-    });
-  };
+    } catch (error) {
+      sendResponse(res, {
+        status: 500,
+        success: false,
+        message: "Erreur lors de la modification du membre",
+        error: error.message,
+      });
+    }
+  }
 
-  // Hashage du mot de passe uniquement s'il est fourni
-  if (password) {
-    bcrypt.hash(password, 10, (err, hashedPassword) => {
-      if (err) {
-        return res.status(500).json({
-          status: "error",
-          message: "Erreur lors du hashage du mot de passe",
-          error: err.message,
+  // Supprimer un membre
+  async supprimerMembre(req, res) {
+    try {
+      const id = parseInt(req.params.id);
+
+      const { changes } = await asyncRun("DELETE FROM membres WHERE id = ?", [
+        id,
+      ]);
+
+      if (changes === 0) {
+        return sendResponse(res, {
+          status: 404,
+          success: false,
+          message: `Membre avec l'ID ${id} non trouvé`,
         });
       }
-      updateMember(hashedPassword);
-    });
-  } else {
-    updateMember();
-  }
-};
 
-// Supprimer un membre
-exports.supprimerMembre = (req, res) => {
-  const id = parseInt(req.params.id);
-  const sql = `DELETE FROM membres WHERE id = ?`;
-
-  db.run(sql, id, function (err) {
-    if (err) {
-      return res.status(500).json({
-        status: "error",
+      sendResponse(res, {
+        status: 204,
+      });
+    } catch (error) {
+      sendResponse(res, {
+        status: 500,
+        success: false,
         message: "Erreur lors de la suppression du membre",
-        error: err.message,
+        error: error.message,
       });
     }
+  }
+}
 
-    if (this.changes === 0) {
-      return res.status(404).json({
-        status: "fail",
-        message: `Membre avec l'ID ${id} non trouvé`,
-      });
-    }
-
-    res.status(204).json({ message: "Membre supprimé avec succès" });
-  });
-};
+module.exports = new MembreController();
