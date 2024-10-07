@@ -1,6 +1,6 @@
-const sqlite3 = require("sqlite3").verbose();
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const sqlite3 = require("sqlite3").verbose();
 
 const db = new sqlite3.Database("./database.sqlite");
 
@@ -12,36 +12,40 @@ exports.login = (req, res) => {
   }
 
   const sql = "SELECT * FROM membres WHERE email = ?";
-  db.get(sql, [email], (err, membre) => {
+  db.get(sql, [email], (err, user) => {
     if (err) {
-      return res.status(500).json({ message: "Erreur de serveur" });
+      return res
+        .status(500)
+        .json({ message: "Erreur lors de la vérification des identifiants" });
     }
 
-    if (!membre) {
-      return res.status(404).json({ message: "Utilisateur non trouvé" });
+    if (!user) {
+      return res
+        .status(401)
+        .json({ message: "Email ou mot de passe incorrect" });
     }
 
-    // Vérifier le mot de passe avec bcrypt
-    bcrypt.compare(password, membre.password, (err, match) => {
-      if (err) {
+    // Vérification du mot de passe avec bcrypt
+    bcrypt.compare(password, user.password, (err, isMatch) => {
+      if (err || !isMatch) {
         return res
-          .status(500)
-          .json({ message: "Erreur de vérification du mot de passe" });
+          .status(401)
+          .json({ message: "Email ou mot de passe incorrect" });
       }
 
-      if (!match) {
-        return res.status(401).json({ message: "Mot de passe incorrect" });
-      }
-
-      // Créer un token JWT
-      const token = jwt.sign({ id: membre.id, role: membre.role }, "secret", {
-        expiresIn: "1h",
-      });
+      // Génération du token JWT
+      const token = jwt.sign(
+        { id: user.id, role: user.role },
+        process.env.JWT_SECRET || "secret",
+        {
+          expiresIn: "1h",
+        }
+      );
 
       res.json({
-        token,
         message: "Connexion réussie",
-        membre: { id: membre.id, email: membre.email },
+        token,
+        user: { id: user.id, email: user.email, role: user.role },
       });
     });
   });
