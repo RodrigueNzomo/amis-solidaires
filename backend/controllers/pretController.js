@@ -31,6 +31,7 @@ exports.listerPrets = (req, res) => {
 exports.creerPret = (req, res) => {
   const { membre_id, montant, date_debut, date_fin, taux_interet } = req.body;
 
+  // Vérification des données obligatoires
   if (!membre_id || !montant || !date_debut || !date_fin) {
     return res.status(400).json({
       status: "fail",
@@ -39,15 +40,17 @@ exports.creerPret = (req, res) => {
     });
   }
 
-  const sql = `INSERT INTO prets (membre_id, montant, date_debut, date_fin, taux_interet, statut) VALUES (?, ?, ?, ?, ?, ?)`;
+  const sql = `INSERT INTO prets (membre_id, montant, date_debut, date_fin, taux_interet, statut) 
+               VALUES (?, ?, ?, ?, ?, ?)`;
   const params = [
     membre_id,
     montant,
     date_debut,
     date_fin,
-    taux_interet || 0,
-    "en cours",
+    taux_interet || 0, // Si taux d'intérêt n'est pas fourni, valeur par défaut 0
+    "en cours", // Statut par défaut lors de la création
   ];
+
   db.run(sql, params, function (err) {
     if (err) {
       return res.status(500).json({
@@ -57,6 +60,7 @@ exports.creerPret = (req, res) => {
       });
     }
 
+    // Renvoi du prêt créé avec succès
     res.status(201).json({
       status: "success",
       data: {
@@ -76,8 +80,18 @@ exports.creerPret = (req, res) => {
 exports.modifierPret = (req, res) => {
   const { membre_id, montant, date_debut, date_fin, taux_interet, statut } =
     req.body;
-  const id = parseInt(req.params.id);
 
+  // Assurez-vous que l'ID est bien un entier et valide
+  const id = parseInt(req.params.id, 10);
+
+  if (isNaN(id)) {
+    return res.status(400).json({
+      status: "fail",
+      message: "ID invalide",
+    });
+  }
+
+  // Vérification des données obligatoires
   if (!membre_id || !montant || !date_debut || !date_fin || !statut) {
     return res.status(400).json({
       status: "fail",
@@ -130,7 +144,15 @@ exports.modifierPret = (req, res) => {
 
 // Supprimer un prêt
 exports.supprimerPret = (req, res) => {
-  const id = parseInt(req.params.id);
+  const id = parseInt(req.params.id, 10); // Validation pour convertir l'ID en entier
+
+  if (isNaN(id)) {
+    return res.status(400).json({
+      status: "fail",
+      message: "ID invalide",
+    });
+  }
+
   const sql = `DELETE FROM prets WHERE id = ?`;
 
   db.run(sql, id, function (err) {
@@ -142,6 +164,7 @@ exports.supprimerPret = (req, res) => {
       });
     }
 
+    // Si aucun prêt n'a été supprimé
     if (this.changes === 0) {
       return res.status(404).json({
         status: "fail",
