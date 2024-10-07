@@ -5,7 +5,7 @@ const sqlite3 = require("sqlite3").verbose();
 // Connexion à la base de données SQLite
 const db = new sqlite3.Database("./database.sqlite");
 
-exports.login = (req, res) => {
+exports.login = (req, res, next) => {
   const { email, password } = req.body;
 
   // Rechercher l'utilisateur par email dans la base de données

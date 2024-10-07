@@ -1,7 +1,7 @@
 const db = require("../models/aideModel");
 
 // Lister toutes les aides
-exports.listerAides = (req, res) => {
+exports.listerAides = (req, res, next) => {
   const sql = "SELECT * FROM aides";
 
   db.all(sql, [], (err, rows) => {
@@ -28,7 +28,7 @@ exports.listerAides = (req, res) => {
 };
 
 // Créer une aide avec validation
-exports.creerAide = (req, res) => {
+exports.creerAide = (req, res, next) => {
   const { membre_id, montant, date, description } = req.body;
 
   if (!membre_id || !montant || !date) {
@@ -65,7 +65,7 @@ exports.creerAide = (req, res) => {
 };
 
 // Modifier une aide avec validation
-exports.modifierAide = (req, res) => {
+exports.modifierAide = (req, res, next) => {
   const { membre_id, montant, date, description, statut } = req.body;
   const id = parseInt(req.params.id);
 
@@ -110,7 +110,7 @@ exports.modifierAide = (req, res) => {
 };
 
 // Supprimer une aide
-exports.supprimerAide = (req, res) => {
+exports.supprimerAide = (req, res, next) => {
   const id = parseInt(req.params.id);
   const sql = `DELETE FROM aides WHERE id = ?`;
 

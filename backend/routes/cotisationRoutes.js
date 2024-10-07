@@ -13,7 +13,7 @@ const sendResponse = (
 };
 
 // Lister toutes les cotisations
-exports.listerCotisations = (req, res) => {
+exports.listerCotisations = (req, res, next) => {
   const sql = "SELECT * FROM cotisations";
 
   db.all(sql, [], (err, rows) => {
@@ -41,7 +41,7 @@ exports.listerCotisations = (req, res) => {
 };
 
 // Créer une cotisation avec validation
-exports.creerCotisation = (req, res) => {
+exports.creerCotisation = (req, res, next) => {
   const { membre_id, montant, date, statut } = req.body;
 
   // Vérification des données obligatoires
@@ -87,7 +87,7 @@ exports.creerCotisation = (req, res) => {
 };
 
 // Modifier une cotisation avec validation
-exports.modifierCotisation = (req, res) => {
+exports.modifierCotisation = (req, res, next) => {
   const { membre_id, montant, date, statut } = req.body;
 
   // Assurez-vous que l'ID est bien un entier et valide

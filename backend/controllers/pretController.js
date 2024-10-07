@@ -13,7 +13,7 @@ const sendResponse = (
 };
 
 // Lister tous les prêts
-exports.listerPrets = (req, res) => {
+exports.listerPrets = (req, res, next) => {
   const sql = "SELECT * FROM prets";
 
   db.all(sql, [], (err, rows) => {
@@ -39,7 +39,7 @@ exports.listerPrets = (req, res) => {
   });
 };
 // Créer un prêt avec validation
-exports.creerPret = (req, res) => {
+exports.creerPret = (req, res, next) => {
   const { membre_id, montant, date_debut, date_fin, taux_interet } = req.body;
 
   // Vérification des données obligatoires
@@ -90,7 +90,7 @@ exports.creerPret = (req, res) => {
 };
 
 // Modifier un prêt avec validation
-exports.modifierPret = (req, res) => {
+exports.modifierPret = (req, res, next) => {
   const { membre_id, montant, date_debut, date_fin, taux_interet, statut } =
     req.body;
 
@@ -159,7 +159,7 @@ exports.modifierPret = (req, res) => {
 };
 
 // Supprimer un prêt
-exports.supprimerPret = (req, res) => {
+exports.supprimerPret = (req, res, next) => {
   const id = parseInt(req.params.id, 10); // Validation pour convertir l'ID en entier
 
   if (isNaN(id)) {

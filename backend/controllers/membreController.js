@@ -45,7 +45,7 @@ const sendResponse = (
 // Contrôleur des membres
 class MembreController {
   // Lister tous les membres
-  async listerMembres(req, res) {
+  async listerMembres(req, res, next) {
     try {
       const membres = await asyncAll("SELECT * FROM membres");
       if (!membres.length) {
@@ -67,7 +67,7 @@ class MembreController {
   }
 
   // Créer un membre
-  async creerMembre(req, res) {
+  async creerMembre(req, res, next) {
     try {
       const {
         nom,
@@ -108,7 +108,7 @@ class MembreController {
   }
 
   // Modifier un membre
-  async modifierMembre(req, res) {
+  async modifierMembre(req, res, next) {
     try {
       const { nom, prenom, email, telephone, role, password } = req.body;
       const id = parseInt(req.params.id);
@@ -151,7 +151,7 @@ class MembreController {
   }
 
   // Supprimer un membre
-  async supprimerMembre(req, res) {
+  async supprimerMembre(req, res, next) {
     try {
       const id = parseInt(req.params.id);
 
