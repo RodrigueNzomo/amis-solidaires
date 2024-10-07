@@ -5,7 +5,6 @@ const bcrypt = require("bcrypt");
 // Lister tous les membres
 exports.listerMembres = (req, res) => {
   const sql = "SELECT * FROM membres";
-
   db.all(sql, [], (err, rows) => {
     if (err) {
       return res.status(500).json({
@@ -15,16 +14,10 @@ exports.listerMembres = (req, res) => {
       });
     }
 
-    if (rows.length === 0) {
-      return res.status(404).json({
-        status: "fail",
-        message: "Aucun membre trouvé",
-      });
-    }
-
-    res.status(200).json({
-      status: "success",
-      data: rows,
+    res.status(rows.length ? 200 : 404).json({
+      status: rows.length ? "success" : "fail",
+      message: rows.length ? undefined : "Aucun membre trouvé",
+      data: rows.length ? rows : undefined,
     });
   });
 };
@@ -40,7 +33,7 @@ exports.creerMembre = (req, res) => {
     });
   }
 
-  // Hashage du mot de passe avant de le stocker
+  // Hashage du mot de passe
   bcrypt.hash(password, 10, (err, hashedPassword) => {
     if (err) {
       return res.status(500).json({
@@ -99,8 +92,10 @@ exports.modifierMembre = (req, res) => {
     });
   }
 
-  const updateMember = (hashedPassword) => {
-    const sql = `UPDATE membres SET nom = ?, prenom = ?, email = ?, telephone = ?, statut = ?, role = ?, password = ? WHERE id = ?`;
+  const updateMember = (hashedPassword = null) => {
+    const sql = `UPDATE membres 
+                 SET nom = ?, prenom = ?, email = ?, telephone = ?, statut = ?, role = ?, password = COALESCE(?, password)
+                 WHERE id = ?`;
     const params = [
       nom,
       prenom,
@@ -130,20 +125,12 @@ exports.modifierMembre = (req, res) => {
 
       res.status(200).json({
         status: "success",
-        data: {
-          id,
-          nom,
-          prenom,
-          email,
-          telephone,
-          statut,
-          role,
-        },
+        data: { id, nom, prenom, email, telephone, statut, role },
       });
     });
   };
 
-  // Si le mot de passe est fourni, nous le hashons
+  // Hashage du mot de passe uniquement s'il est fourni
   if (password) {
     bcrypt.hash(password, 10, (err, hashedPassword) => {
       if (err) {
@@ -156,7 +143,7 @@ exports.modifierMembre = (req, res) => {
       updateMember(hashedPassword);
     });
   } else {
-    updateMember(null); // Pas de modification du mot de passe
+    updateMember();
   }
 };
 
@@ -181,6 +168,6 @@ exports.supprimerMembre = (req, res) => {
       });
     }
 
-    res.status(204).send(); // Succès, aucun contenu à retourner
+    res.status(204).json({ message: "Membre supprimé avec succès" });
   });
 };
