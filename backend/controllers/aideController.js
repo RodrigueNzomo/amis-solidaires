@@ -40,6 +40,7 @@ exports.creerAide = (req, res) => {
 
   const sql = `INSERT INTO aides (membre_id, montant, date, description, statut) VALUES (?, ?, ?, ?, ?)`;
   const params = [membre_id, montant, date, description || "", "en attente"];
+
   db.run(sql, params, function (err) {
     if (err) {
       return res.status(500).json({

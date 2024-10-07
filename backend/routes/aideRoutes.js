@@ -5,22 +5,30 @@ const verifierToken = require("../middlewares/authMiddleware");
 const verifierRole = require("../middlewares/roleMiddleware");
 
 // Routes CRUD pour les aides avec protection JWT et gestion des rôles
-router
-  .route("/")
-  .get(
-    verifierToken,
-    verifierRole(["president", "tresorier"]),
-    aideController.listerAides
-  )
-  .post(verifierToken, verifierRole(["tresorier"]), aideController.creerAide);
+router.get(
+  "/",
+  verifierToken,
+  verifierRole(["president", "tresorier"]),
+  aideController.listerAides
+);
+router.post(
+  "/",
+  verifierToken,
+  verifierRole(["tresorier"]),
+  aideController.creerAide
+);
 
-router
-  .route("/:id")
-  .put(verifierToken, verifierRole(["tresorier"]), aideController.modifierAide)
-  .delete(
-    verifierToken,
-    verifierRole(["president"]),
-    aideController.supprimerAide
-  );
+router.put(
+  "/:id",
+  verifierToken,
+  verifierRole(["tresorier"]),
+  aideController.modifierAide
+);
+router.delete(
+  "/:id",
+  verifierToken,
+  verifierRole(["president"]),
+  aideController.supprimerAide
+);
 
 module.exports = router;
