@@ -125,7 +125,7 @@ app.use("/api/membres", membreRoutes);
 app.use("/api/cotisations", cotisationRoutes);
 app.use("/api/prets", pretRoutes);
 app.use("/api/aides", aideRoutes);
-app.use("/api/auth", authRoutes);
+app.use("/api/auth/register", authRoutes);
 
 // Middleware pour gérer les erreurs 404
 app.use((req, res, next) => {
@@ -160,7 +160,7 @@ process.on("SIGINT", () => {
 });
 
 // Démarrage du serveur
-const PORT = process.env.PORT || 4000;
+const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`Serveur démarré sur le port ${PORT}`);
 });
