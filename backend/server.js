@@ -128,7 +128,7 @@ app.use("/api/membres", membreRoutes);
 app.use("/api/cotisations", cotisationRoutes);
 app.use("/api/prets", pretRoutes);
 app.use("/api/aides", aideRoutes);
-app.use("/api/auth", authRoutes); // Route pour la gestion de l'authentification
+app.use("/api/auth/login", authRoutes); // Route pour la gestion de l'authentification
 
 // Démarrer la base de données et créer les tables
 const db = openDatabase("./database.sqlite");
