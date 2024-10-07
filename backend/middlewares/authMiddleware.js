@@ -4,7 +4,7 @@ const jwt = require("jsonwebtoken");
 const verifierToken = (req, res, next) => {
   const authHeader = req.headers["authorization"]; // Récupérer l'en-tête Authorization
 
-  // Vérifier si l'en-tête contient un token
+  // Vérifier si l'en-tête contient un token Bearer
   if (!authHeader || !authHeader.startsWith("Bearer ")) {
     return res.status(403).json({
       status: "fail",

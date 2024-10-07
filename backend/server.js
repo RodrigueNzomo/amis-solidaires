@@ -23,18 +23,19 @@ const openDatabase = (dbPath) => {
 };
 
 // Fonction pour créer les tables si elles n'existent pas
-const createTables = (db) => {
-  const createMembresTableSQL = `
-    CREATE TABLE IF NOT EXISTS membres (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      nom TEXT NOT NULL,
-      prenom TEXT NOT NULL,
-      email TEXT NOT NULL,
-      password TEXT NOT NULL, -- Colonne pour le mot de passe hashé
-      telephone TEXT,
-      statut TEXT DEFAULT 'actif'
-    )
-  `;
+const createMembresTableSQL = `
+  CREATE TABLE IF NOT EXISTS membres (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    nom TEXT NOT NULL,
+    prenom TEXT NOT NULL,
+    email TEXT NOT NULL,
+    telephone TEXT,
+    statut TEXT DEFAULT 'actif',
+    role TEXT NOT NULL DEFAULT 'membre',  -- Colonne 'role' avec valeur par défaut
+    password TEXT NOT NULL  -- Colonne pour le mot de passe
+  )
+`;
+
 
   const createCotisationsTableSQL = `
     CREATE TABLE IF NOT EXISTS cotisations (
