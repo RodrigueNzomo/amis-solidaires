@@ -1,7 +1,10 @@
 const db = require("../models/cotisationModel"); // Assurez-vous que cotisationModel.js est correct.
 
 // Utilitaire pour envoyer des réponses standardisées
-const sendResponse = (res, { status = 200, success = true, message = "", data = null }) => {
+const sendResponse = (
+  res,
+  { status = 200, success = true, message = "", data = null }
+) => {
   res.status(status).json({
     status: success ? "success" : "fail",
     message,
@@ -104,3 +107,6 @@ exports.modifierCotisation = (req, res) => {
       status: 400,
       success: false,
       message: "Le membre, le montant, la date et le statut sont obligatoires",
+    });
+  }
+};
