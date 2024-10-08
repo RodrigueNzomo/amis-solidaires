@@ -9,6 +9,14 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <link rel="icon" href="assets/image/image2.avif" type="image/avif"> <!-- Assurez-vous que le type est correct -->
+    <script>
+        // Rediriger vers la page de connexion si l'utilisateur n'est pas connecté
+        document.addEventListener('DOMContentLoaded', function () {
+            if (!sessionStorage.getItem('isLoggedIn')) {
+                window.location.href = 'login.html';
+            }
+        });
+    </script>
 </head>
 
 <body>
@@ -21,7 +29,9 @@
             <a class="nav-link" href="cotisation.html">Gestion des Cotisations</a>
             <a class="nav-link" href="pret.html">Gestion des Prêts</a>
             <a class="nav-link" href="aide.html">Gestion des Aides</a>
-            <a class="nav-link" href="login.html">Se connecter</a> <!-- Lien vers la page de connexion -->
+            <!-- <a class="nav-link" href="login.html">Se connecter</a> Lien vers la page de connexion -->
+            <button id="logout-btn" class="btn btn-danger">Se déconnecter</button>
+
         </nav>
     </header>
 

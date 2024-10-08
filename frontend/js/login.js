@@ -42,3 +42,58 @@ document
       );
     }
   });
+
+document
+  .getElementById("login-form")
+  .addEventListener("submit", function (event) {
+    event.preventDefault();
+
+    const email = document.getElementById("email").value.trim();
+    const password = document.getElementById("password").value.trim();
+
+    if (!email || !password) {
+      document.getElementById("error-message").textContent =
+        "Tous les champs doivent être remplis.";
+      return;
+    }
+
+    const utilisateurs = [
+      { email: "test1@example.com", password: "password123" },
+      { email: "test2@example.com", password: "password456" },
+    ];
+
+    const utilisateur = utilisateurs.find(
+      (user) => user.email === email && user.password === password
+    );
+
+    if (utilisateur) {
+      localStorage.setItem("isLoggedIn", true);
+      window.location.href = "index.html";
+    } else {
+      document.getElementById("error-message").textContent =
+        "Identifiants invalides. Veuillez réessayer.";
+    }
+  });
+
+// Code à ajouter dans chaque page pour vérifier l'état de la connexion
+document.addEventListener("DOMContentLoaded", function () {
+  if (!localStorage.getItem("isLoggedIn")) {
+    window.location.href = "login.html";
+  }
+});
+
+// document
+//   .getElementById("login-form")
+//   .addEventListener("submit", function (event) {
+//     event.preventDefault();
+
+//     const email = document.getElementById("email").value;
+//     const password = document.getElementById("password").value;
+
+//     if (email === "test1@example.com" && password === "password123") {
+//       sessionStorage.setItem("isLoggedIn", true);
+//       window.location.href = "index.html";
+//     } else {
+//       alert("Identifiants invalides");
+//     }
+//   });

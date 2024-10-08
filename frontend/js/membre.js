@@ -102,3 +102,7 @@ const supprimerMembre = async (id) => {
     afficherMessageErreur("Erreur lors de la suppression du membre.");
   }
 };
+document.getElementById("logout-btn").addEventListener("click", function () {
+  localStorage.removeItem("isLoggedIn");
+  window.location.href = "login.html";
+});

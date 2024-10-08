@@ -171,3 +171,7 @@ document
     const statut = this.value;
     filtrerPretsParStatut(statut);
   });
+document.getElementById("logout-btn").addEventListener("click", function () {
+  localStorage.removeItem("isLoggedIn");
+  window.location.href = "login.html";
+});

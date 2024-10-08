@@ -135,3 +135,7 @@ document
     const statut = this.value;
     filtrerAidesParStatut(statut);
   });
+document.getElementById("logout-btn").addEventListener("click", function () {
+  localStorage.removeItem("isLoggedIn");
+  window.location.href = "login.html";
+});

@@ -155,3 +155,7 @@ let cotisations = [
 
 // Affichage initial des cotisations
 afficherCotisations(cotisations);
+document.getElementById("logout-btn").addEventListener("click", function () {
+  localStorage.removeItem("isLoggedIn");
+  window.location.href = "login.html";
+});
