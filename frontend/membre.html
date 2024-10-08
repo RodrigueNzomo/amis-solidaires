@@ -23,7 +23,6 @@
     </header>
 
     <main class="container mt-4">
-        <!-- Section Membres -->
         <section id="membres">
             <h2>Liste des Membres</h2>
             <table class="table table-striped">
@@ -43,10 +42,10 @@
             </table>
         </section>
 
-        <!-- Formulaire pour ajouter un membre -->
         <section id="ajouter-membre" class="mt-4">
             <h2>Ajouter un Membre</h2>
             <form id="form-membre" class="needs-validation" novalidate>
+                <!-- Form content -->
                 <div class="row">
                     <div class="col-md-6">
                         <div class="mb-3">
@@ -61,66 +60,11 @@
                         </div>
                     </div>
                 </div>
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="mb-3">
-                            <label for="email" class="form-label">Email :</label>
-                            <input type="email" class="form-control" id="email" name="email" required>
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="mb-3">
-                            <label for="telephone" class="form-label">Téléphone :</label>
-                            <input type="text" class="form-control" id="telephone" name="telephone" required>
-                        </div>
-                    </div>
-                </div>
                 <div class="mb-3">
-                    <label for="statut" class="form-label">Statut :</label>
-                    <select id="statut" name="statut" class="form-select" required>
-                        <option value="" selected disabled>Choisir le statut</option>
-                        <option value="actif">Actif</option>
-                        <option value="inactif">Inactif</option>
-                    </select>
+                    <button type="submit" class="btn btn-primary">Ajouter Membre</button>
                 </div>
-                <button type="submit" class="btn btn-primary">Ajouter Membre</button>
             </form>
         </section>
-
-        <!-- Section pour filtrer et trier les membres -->
-        <section id="filtrer-trier" class="mt-5">
-            <h2>Filtrer et Trier les Membres</h2>
-            <div class="d-flex justify-content-between align-items-center">
-                <div>
-                    <button id="tri-nom" class="btn btn-secondary me-2">Trier par Nom</button>
-                    <button id="tri-statut" class="btn btn-secondary">Trier par Statut</button>
-                </div>
-                <div class="mb-3">
-                    <label for="filtre-statut" class="form-label">Filtrer par statut :</label>
-                    <select id="filtre-statut" class="form-select">
-                        <option value="">Tous les statuts</option>
-                        <option value="actif">Actif</option>
-                        <option value="inactif">Inactif</option>
-                    </select>
-                </div>
-            </div>
-        </section>
-
-        <!-- Liste des membres après tri et filtrage -->
-        <table class="table table-striped mt-3">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Nom</th>
-                    <th>Prénom</th>
-                    <th>Email</th>
-                    <th>Statut</th>
-                </tr>
-            </thead>
-            <tbody id="liste-membres-tri">
-                <!-- Les membres triés/filtrés seront chargés ici via JavaScript -->
-            </tbody>
-        </table>
     </main>
 
     <script src="js/membre.js"></script>

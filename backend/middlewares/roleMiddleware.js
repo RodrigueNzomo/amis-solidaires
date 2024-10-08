@@ -13,6 +13,9 @@ const verifierRole = (roles) => {
 
     // Vérifier si le rôle de l'utilisateur est autorisé
     if (!roles.includes(userRole)) {
+      console.log(
+        `Tentative d'accès refusée pour l'utilisateur avec le rôle : ${userRole}`
+      );
       return res.status(403).json({
         status: "fail",
         message:

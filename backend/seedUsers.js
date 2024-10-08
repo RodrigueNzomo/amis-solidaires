@@ -59,8 +59,6 @@ const utilisateurs = [
 
 // Fonction pour insérer les utilisateurs avec hashage des mots de passe
 const insererUtilisateurs = () => {
-  let count = 0;
-
   utilisateurs.forEach((utilisateur, index) => {
     // Hashage du mot de passe
     bcrypt.hash(utilisateur.password, 10, (err, hashedPassword) => {
@@ -93,9 +91,8 @@ const insererUtilisateurs = () => {
           console.log(`Utilisateur ${utilisateur.nom} inséré avec succès.`);
         }
 
-        // Fermer la connexion à la base de données après la dernière insertion
-        count++;
-        if (count === utilisateurs.length) {
+        // Si c'est le dernier utilisateur, fermer la base de données
+        if (index === utilisateurs.length - 1) {
           db.close((err) => {
             if (err) {
               console.error(

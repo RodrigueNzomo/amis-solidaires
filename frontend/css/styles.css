@@ -7,7 +7,9 @@ body {
     margin: 0;
     padding: 0;
     color: #333;
-    background-image: url('https://www.example.com/background-solidarity.jpg'); /* Image de fond symbolisant la diversité culturelle */
+   background-image: url('frontend/assets/image/background-solidarity.jpg'); /* Image de fond symbolisant la diversité culturelle */
+
+
     background-size: cover;
     background-attachment: fixed;
 }

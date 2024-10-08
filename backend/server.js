@@ -1,14 +1,15 @@
 // Importer les modules nécessaires
 const express = require("express");
-const bcrypt = require("bcryptjs");
+const cookieParser = require("cookie-parser");
 const sqlite3 = require("sqlite3").verbose();
+const fs = require("fs").promises;
+const winston = require("winston");
+
 const membreRoutes = require("./routes/membreRoutes");
 const cotisationRoutes = require("./routes/cotisationRoutes");
 const pretRoutes = require("./routes/pretRoutes");
 const aideRoutes = require("./routes/aideRoutes");
 const authRoutes = require("./routes/authRoutes");
-const cookieParser = require("cookie-parser");
-const winston = require("winston");
 
 // Initialisation de l'application Express
 const app = express();
@@ -27,7 +28,6 @@ const logger = winston.createLogger({
 logger.info("Logger initialisé avec Winston");
 
 // Middleware de suppression de répertoires (facultatif, assurez-vous que vous en avez besoin)
-const fs = require("fs").promises;
 fs.rmdir("./path-to-delete", { recursive: true })
   .then(() => logger.info("Répertoire supprimé"))
   .catch((err) =>

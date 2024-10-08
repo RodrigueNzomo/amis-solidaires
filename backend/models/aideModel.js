@@ -1,5 +1,20 @@
 const sqlite3 = require("sqlite3").verbose();
-const db = new sqlite3.Database(__dirname + "/../database.sqlite"); // Connexion à la base de données
+const path = require("path");
+
+// Connexion à la base de données
+const db = new sqlite3.Database(
+  path.join(__dirname, "../database.sqlite"),
+  (err) => {
+    if (err) {
+      console.error(
+        "Erreur lors de la connexion à la base de données:",
+        err.message
+      );
+    } else {
+      console.log("Connexion réussie à la base de données SQLite.");
+    }
+  }
+);
 
 // Créer la table des aides si elle n'existe pas
 const createTable = () => {

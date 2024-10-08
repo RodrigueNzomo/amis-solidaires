@@ -8,14 +8,20 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Insérer les données dans la section dédiée aux statistiques
   const statsDiv = document.getElementById("statistiques-donnees");
-  statsDiv.innerHTML = Object.entries(statistiques)
-    .map(
-      ([key, value]) =>
-        `<p>Total ${capitalizeFirstLetter(
-          key
-        )} : ${value.toLocaleString()} FCFA</p>`
-    )
-    .join("");
+
+  // Vérifier si l'élément statsDiv existe
+  if (statsDiv) {
+    statsDiv.innerHTML = Object.entries(statistiques)
+      .map(
+        ([key, value]) =>
+          `<p>Total ${capitalizeFirstLetter(
+            key
+          )} : ${value.toLocaleString()} FCFA</p>`
+      )
+      .join("");
+  } else {
+    console.error("L'élément #statistiques-donnees est introuvable.");
+  }
 });
 
 // Fonction utilitaire pour capitaliser la première lettre d'une chaîne

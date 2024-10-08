@@ -1,5 +1,5 @@
-// membreController.js
 const db = require("../models/membreModel");
+const bcrypt = require("bcryptjs");
 
 // Utilitaire pour envoyer des réponses standardisées
 const sendResponse = (
@@ -41,8 +41,8 @@ exports.listerMembres = (req, res, next) => {
   });
 };
 
-// Créer un membre avec validation
-exports.creerMembre = (req, res, next) => {
+// Créer un membre avec validation et hashage de mot de passe
+exports.creerMembre = async (req, res, next) => {
   const { nom, prenom, email, telephone, statut, role, password } = req.body;
 
   if (!nom || !prenom || !email || !password) {
@@ -53,45 +53,55 @@ exports.creerMembre = (req, res, next) => {
     });
   }
 
-  const sql = `INSERT INTO membres (nom, prenom, email, telephone, statut, role, password) 
-               VALUES (?, ?, ?, ?, ?, ?, ?)`;
-  const params = [
-    nom,
-    prenom,
-    email,
-    telephone,
-    statut || "actif",
-    role || "membre",
-    password,
-  ];
+  try {
+    const hashedPassword = await bcrypt.hash(password, 10); // Hashage du mot de passe
+    const sql = `INSERT INTO membres (nom, prenom, email, telephone, statut, role, password) 
+                 VALUES (?, ?, ?, ?, ?, ?, ?)`;
+    const params = [
+      nom,
+      prenom,
+      email,
+      telephone,
+      statut || "actif",
+      role || "membre",
+      hashedPassword,
+    ];
 
-  db.run(sql, params, function (err) {
-    if (err) {
-      return sendResponse(res, {
-        status: 500,
-        success: false,
-        message: "Erreur lors de la création du membre",
-        data: err.message,
+    db.run(sql, params, function (err) {
+      if (err) {
+        return sendResponse(res, {
+          status: 500,
+          success: false,
+          message: "Erreur lors de la création du membre",
+          data: err.message,
+        });
+      }
+
+      sendResponse(res, {
+        status: 201,
+        data: {
+          id: this.lastID,
+          nom,
+          prenom,
+          email,
+          telephone,
+          statut: statut || "actif",
+          role: role || "membre",
+        },
       });
-    }
-
-    sendResponse(res, {
-      status: 201,
-      data: {
-        id: this.lastID,
-        nom,
-        prenom,
-        email,
-        telephone,
-        statut: statut || "actif",
-        role: role || "membre",
-      },
     });
-  });
+  } catch (error) {
+    return sendResponse(res, {
+      status: 500,
+      success: false,
+      message: "Erreur lors du hashage du mot de passe",
+      data: error.message,
+    });
+  }
 };
 
-// Modifier un membre avec validation
-exports.modifierMembre = (req, res, next) => {
+// Modifier un membre avec validation et hashage du mot de passe si nécessaire
+exports.modifierMembre = async (req, res, next) => {
   const { nom, prenom, email, telephone, statut, role, password } = req.body;
   const id = parseInt(req.params.id, 10);
 
@@ -103,6 +113,11 @@ exports.modifierMembre = (req, res, next) => {
     });
   }
 
+  let hashedPassword = null;
+  if (password) {
+    hashedPassword = await bcrypt.hash(password, 10); // Hashage du nouveau mot de passe si modifié
+  }
+
   const sql = `UPDATE membres SET nom = ?, prenom = ?, email = ?, telephone = ?, statut = ?, role = ?, password = COALESCE(?, password) 
                WHERE id = ?`;
   const params = [
@@ -112,7 +127,7 @@ exports.modifierMembre = (req, res, next) => {
     telephone,
     statut || "actif",
     role || "membre",
-    password,
+    hashedPassword,
     id,
   ];
 

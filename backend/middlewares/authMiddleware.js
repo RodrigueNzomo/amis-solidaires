@@ -7,7 +7,9 @@ const verifierToken = (req, res, next) => {
   const token =
     authHeader && authHeader.startsWith("Bearer ")
       ? authHeader.split(" ")[1]
-      : null;
+      : req.cookies
+      ? req.cookies.token
+      : null; // Option d'utilisation des cookies
 
   // Si aucun token n'est trouvé
   if (!token) {

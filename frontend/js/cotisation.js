@@ -3,10 +3,14 @@ document.addEventListener("DOMContentLoaded", () => {
   const chargerCotisations = async () => {
     try {
       const response = await fetch("/api/cotisations");
+      if (!response.ok)
+        throw new Error("Erreur lors du chargement des cotisations");
       const data = await response.json();
-      afficherCotisations(data);
+      cotisations = data; // Mettre à jour la variable globale cotisations
+      afficherCotisations(cotisations);
     } catch (error) {
       console.error("Erreur lors du chargement des cotisations :", error);
+      afficherMessageErreur("Erreur lors du chargement des cotisations.");
     }
   };
 
@@ -41,6 +45,12 @@ document.addEventListener("DOMContentLoaded", () => {
       const montant = document.getElementById("montant").value;
       const dateVersement = document.getElementById("dateVersement").value;
 
+      // Vérifier que les champs sont remplis
+      if (!idMembre || !montant || !dateVersement) {
+        afficherMessageErreur("Tous les champs doivent être remplis.");
+        return;
+      }
+
       try {
         await fetch("/api/cotisations", {
           method: "POST",
@@ -52,6 +62,7 @@ document.addEventListener("DOMContentLoaded", () => {
         chargerCotisations(); // Recharger les cotisations après ajout
       } catch (error) {
         console.error("Erreur lors de l'ajout de la cotisation :", error);
+        afficherMessageErreur("Erreur lors de l'ajout de la cotisation.");
       }
     });
 
@@ -64,21 +75,18 @@ document.addEventListener("DOMContentLoaded", () => {
       chargerCotisations(); // Recharger les cotisations après suppression
     } catch (error) {
       console.error("Erreur lors de la suppression de la cotisation :", error);
+      afficherMessageErreur("Erreur lors de la suppression de la cotisation.");
     }
   };
 
   // Fonction pour trier les cotisations par critère (montant, date ou statut)
   const trierCotisations = (critere) => {
-    cotisations.sort((a, b) => {
-      if (critere === "montant") {
-        return a.montant - b.montant;
-      } else if (critere === "date") {
-        return new Date(a.date) - new Date(b.date);
-      } else if (critere === "statut") {
-        return a.statut.localeCompare(b.statut);
-      }
+    const cotisationsTries = [...cotisations].sort((a, b) => {
+      if (critere === "montant") return a.montant - b.montant;
+      if (critere === "date") return new Date(a.date) - new Date(b.date);
+      if (critere === "statut") return a.statut.localeCompare(b.statut);
     });
-    afficherCotisations(cotisations);
+    afficherCotisations(cotisationsTries);
   };
 
   // Fonction pour filtrer les cotisations par statut
@@ -110,8 +118,18 @@ document.addEventListener("DOMContentLoaded", () => {
   chargerCotisations();
 });
 
+// Fonction pour afficher les messages d'erreur
+const afficherMessageErreur = (message) => {
+  const erreurDiv = document.getElementById("message-erreur");
+  erreurDiv.innerText = message;
+  erreurDiv.style.display = "block";
+  setTimeout(() => {
+    erreurDiv.style.display = "none";
+  }, 3000);
+};
+
 // Exemple de données de cotisations pour démonstration
-const cotisations = [
+let cotisations = [
   {
     id: 1,
     membre_id: 101,

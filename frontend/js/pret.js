@@ -8,6 +8,7 @@ document.addEventListener("DOMContentLoaded", () => {
       afficherPrets(data);
     } catch (error) {
       console.error("Erreur:", error);
+      afficherMessageErreur("Erreur lors du chargement des prêts.");
     }
   };
 
@@ -19,10 +20,12 @@ document.addEventListener("DOMContentLoaded", () => {
         (pret) => `
       <tr>
         <td>${pret.id}</td>
-        <td>${pret.idMembre}</td>
+        <td>${pret.membre_id}</td>
         <td>${pret.montant}</td>
-        <td>${pret.tauxInteret}</td>
-        <td>${pret.echeance}</td>
+        <td>${pret.taux_interet}</td>
+        <td>${pret.date_debut}</td>
+        <td>${pret.date_fin}</td>
+        <td>${pret.statut}</td>
         <td>
           <button class="btn btn-danger" onclick="supprimerPret(${pret.id})">Supprimer</button>
         </td>
@@ -40,8 +43,22 @@ document.addEventListener("DOMContentLoaded", () => {
       idMembre: document.getElementById("idMembre").value,
       montant: document.getElementById("montant").value,
       tauxInteret: document.getElementById("tauxInteret").value,
-      echeance: document.getElementById("echeance").value,
+      date_debut: document.getElementById("date_debut").value,
+      date_fin: document.getElementById("date_fin").value,
     };
+
+    // Vérifier que tous les champs sont remplis
+    if (
+      !pretData.idMembre ||
+      !pretData.montant ||
+      !pretData.date_debut ||
+      !pretData.date_fin
+    ) {
+      afficherMessageErreur(
+        "Tous les champs obligatoires doivent être remplis."
+      );
+      return;
+    }
 
     try {
       const response = await fetch("/api/prets", {
@@ -52,9 +69,11 @@ document.addEventListener("DOMContentLoaded", () => {
         body: JSON.stringify(pretData),
       });
       if (!response.ok) throw new Error("Erreur lors de l'ajout du prêt");
+      form.reset(); // Réinitialiser le formulaire après ajout
       chargerPrets(); // Recharger les prêts après ajout
     } catch (error) {
       console.error("Erreur:", error);
+      afficherMessageErreur("Erreur lors de l'ajout du prêt.");
     }
   });
 
@@ -62,6 +81,17 @@ document.addEventListener("DOMContentLoaded", () => {
   chargerPrets();
 });
 
+// Fonction pour afficher les messages d'erreur
+const afficherMessageErreur = (message) => {
+  const erreurDiv = document.getElementById("message-erreur");
+  erreurDiv.innerText = message;
+  erreurDiv.style.display = "block";
+  setTimeout(() => {
+    erreurDiv.style.display = "none";
+  }, 3000);
+};
+
+// Fonction pour supprimer un prêt
 const supprimerPret = async (id) => {
   try {
     const response = await fetch(`/api/prets/${id}`, {
@@ -71,6 +101,7 @@ const supprimerPret = async (id) => {
     chargerPrets(); // Recharger la liste des prêts après suppression
   } catch (error) {
     console.error("Erreur:", error);
+    afficherMessageErreur("Erreur lors de la suppression du prêt.");
   }
 };
 
@@ -101,26 +132,6 @@ let prets = [
     statut: "en cours",
   },
 ];
-
-// Fonction pour afficher les prêts
-function afficherPrets(pretsList) {
-  const pretsTable = document.getElementById("liste-prets");
-  pretsTable.innerHTML = ""; // Clear table
-
-  pretsList.forEach((pret) => {
-    const row = `
-    <tr>
-      <td>${pret.id}</td>
-      <td>${pret.membre_id}</td>
-      <td>${pret.montant}</td>
-      <td>${pret.date_debut}</td>
-      <td>${pret.date_fin}</td>
-      <td>${pret.statut}</td>
-    </tr>
-  `;
-    pretsTable.innerHTML += row;
-  });
-}
 
 // Afficher les prêts initialement
 afficherPrets(prets);

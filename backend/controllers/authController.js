@@ -148,7 +148,7 @@ exports.login = (req, res, next) => {
       const token = jwt.sign(
         { id: user.id, role: user.role },
         process.env.JWT_SECRET || "secret", // Clé secrète pour JWT
-        { expiresIn: "1h" }
+        { expiresIn: "2h" } // Ajustement de la durée de vie du token à 2 heures
       );
 
       // Connexion réussie avec retour du token et des infos utilisateur
@@ -166,4 +166,28 @@ exports.login = (req, res, next) => {
       });
     });
   });
+};
+
+// Ajout potentiel : Middleware pour vérifier le token JWT
+exports.verifyToken = (req, res, next) => {
+  const token = req.headers["authorization"];
+  if (!token) {
+    return sendResponse(res, {
+      status: 403,
+      success: false,
+      message: "Un token est requis pour cette action",
+    });
+  }
+
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET || "secret");
+    req.user = decoded; // Attacher les infos utilisateur à la requête
+    next();
+  } catch (err) {
+    return sendResponse(res, {
+      status: 401,
+      success: false,
+      message: "Token invalide",
+    });
+  }
 };

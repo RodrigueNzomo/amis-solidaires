@@ -1,4 +1,3 @@
-// aideController.js
 const db = require("../models/aideModel");
 
 // Utilitaire pour envoyer des réponses standardisées

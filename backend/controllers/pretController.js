@@ -18,26 +18,28 @@ exports.listerPrets = (req, res, next) => {
 
   db.all(sql, [], (err, rows) => {
     if (err) {
-      return res.status(500).json({
-        status: "error",
+      return sendResponse(res, {
+        status: 500,
+        success: false,
         message: "Erreur lors de la récupération des prêts",
-        error: err.message,
+        data: err.message,
       });
     }
 
     if (rows.length === 0) {
-      return res.status(404).json({
-        status: "fail",
+      return sendResponse(res, {
+        status: 404,
+        success: false,
         message: "Aucun prêt trouvé",
       });
     }
 
-    res.status(200).json({
-      status: "success",
+    sendResponse(res, {
       data: rows,
     });
   });
 };
+
 // Créer un prêt avec validation
 exports.creerPret = (req, res, next) => {
   const { membre_id, montant, date_debut, date_fin, taux_interet } = req.body;
