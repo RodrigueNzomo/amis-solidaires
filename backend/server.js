@@ -8,30 +8,33 @@ const pretRoutes = require("./routes/pretRoutes");
 const aideRoutes = require("./routes/aideRoutes");
 const authRoutes = require("./routes/authRoutes");
 const cookieParser = require("cookie-parser");
-app.use(cookieParser());
-const fs = require("fs").promises;
-fs.rmdir("./path-to-delete", { recursive: true })
-  .then(() => console.log("Deleted!"))
-  .catch((err) => console.error("Error:", err));
-const fg = require("fast-glob");
-const files = fg.sync(["**/*.js"]);
-console.log(files);
 const winston = require("winston");
+
+// Initialisation de l'application Express
+const app = express();
+
+// Middleware pour analyser les requêtes en JSON et gérer les cookies
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
+
+// Configuration du logger avec Winston pour un meilleur suivi des logs
 const logger = winston.createLogger({
   level: "info",
   format: winston.format.json(),
   transports: [new winston.transports.Console()],
 });
-logger.info("Hello, Winston!");
+logger.info("Logger initialisé avec Winston");
 
-// Initialisation de l'application Express
-const app = express();
+// Middleware de suppression de répertoires (facultatif, assurez-vous que vous en avez besoin)
+const fs = require("fs").promises;
+fs.rmdir("./path-to-delete", { recursive: true })
+  .then(() => logger.info("Répertoire supprimé"))
+  .catch((err) =>
+    logger.error("Erreur lors de la suppression du répertoire:", err)
+  );
 
-// Middleware pour analyser les requêtes en JSON
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-
-// Création des tables SQL
+// Fonction pour créer les tables SQL dans la base de données
 const SQL_TABLES = {
   membres: `
     CREATE TABLE IF NOT EXISTS membres (
@@ -86,10 +89,10 @@ const SQL_TABLES = {
 const initializeDatabase = () => {
   const db = new sqlite3.Database("./database.sqlite", (err) => {
     if (err) {
-      console.error("Erreur de connexion à la base de données:", err.message);
+      logger.error("Erreur de connexion à la base de données:", err.message);
       process.exit(1);
     }
-    console.log("Connexion réussie à la base de données SQLite");
+    logger.info("Connexion réussie à la base de données SQLite");
   });
 
   // Création séquentielle des tables
@@ -97,12 +100,12 @@ const initializeDatabase = () => {
     Object.entries(SQL_TABLES).forEach(([tableName, sql]) => {
       db.run(sql, (err) => {
         if (err) {
-          console.error(
+          logger.error(
             `Erreur lors de la création de la table ${tableName}:`,
             err.message
           );
         } else {
-          console.log(`Table "${tableName}" créée avec succès`);
+          logger.info(`Table "${tableName}" créée avec succès`);
         }
       });
     });
@@ -125,10 +128,10 @@ app.use("/api/membres", membreRoutes);
 app.use("/api/cotisations", cotisationRoutes);
 app.use("/api/prets", pretRoutes);
 app.use("/api/aides", aideRoutes);
-app.use("/api/auth/register", authRoutes);
+app.use("/api/auth", authRoutes);
 
 // Middleware pour gérer les erreurs 404
-app.use((req, res, next) => {
+app.use((req, res) => {
   res.status(404).json({
     status: "fail",
     message: "Route non trouvée",
@@ -137,23 +140,23 @@ app.use((req, res, next) => {
 
 // Middleware de gestion globale des erreurs
 app.use((err, req, res, next) => {
-  console.error(err.stack);
+  logger.error(err.stack);
   res.status(err.status || 500).json({
     status: "error",
     message: err.message || "Une erreur interne est survenue",
   });
 });
 
-// Gestionnaire d'arrêt propre
+// Gestionnaire d'arrêt propre pour fermer la base de données lors de l'arrêt du serveur
 process.on("SIGINT", () => {
   db.close((err) => {
     if (err) {
-      console.error(
+      logger.error(
         "Erreur lors de la fermeture de la base de données:",
         err.message
       );
     } else {
-      console.log("Connexion à la base de données fermée.");
+      logger.info("Connexion à la base de données fermée.");
     }
     process.exit(err ? 1 : 0);
   });
@@ -162,5 +165,5 @@ process.on("SIGINT", () => {
 // Démarrage du serveur
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
-  console.log(`Serveur démarré sur le port ${PORT}`);
+  logger.info(`Serveur démarré sur le port ${PORT}`);
 });
