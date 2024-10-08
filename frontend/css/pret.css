@@ -13,7 +13,7 @@ header {
     color: #fff;
     padding: 20px;
     text-align: center;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 4px rgba(0, 0, 0, 0.1);
     position: relative;
 }
 
@@ -139,12 +139,16 @@ input[type="text"]:focus, input[type="number"]:focus, input[type="email"]:focus,
 }
 
 #ajouter-pret::before {
-    left: -180px;
+    left: -1300px;
+    width: 2500px;
+    height: 2500px;
     background-image: url('../assets/icones/icone1.avif');
 }
 
 #ajouter-pret::after {
-    right: -180px;
+    right: -1300px;
+    width: 2500px;
+    height: 2500px;
     background-image: url('../assets/icones/icone3.avif');
 }
 
