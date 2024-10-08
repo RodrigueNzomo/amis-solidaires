@@ -1,195 +1,87 @@
-/* # General Style for the entire project */
-/* Dynamic colors and modern style to represent solidarity and cultural diversity */
+/* # Style général pour tout le projet */
+/* Couleurs dynamiques et style moderne pour représenter la solidarité et la diversité culturelle */
 
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f4f4f4;
     color: #333;
-    background-color: #4b98e4;
-    background-image: url('frontend/assets/image/background-solidarity.jpg'); /* Background image symbolizing cultural diversity */
-    background-size: cover;
-    background-attachment: fixed;
     margin: 0;
     padding: 0;
+    background-image: url('assets/image/background-solidarity.jpg'); /* Assurez-vous que le chemin est correct */
+    background-size: cover;
+    background-attachment: fixed;
 }
 
-/* Header style */
 header {
-    background-color: #ffcc00; /* Bright yellow for conviviality and joy */
+    background-color: #ffcc00;
     color: #fff;
-    padding: 20px;
+    padding: 20px 0;
     text-align: center;
-    font-size: 2rem;
-    font-family: 'Montserrat', sans-serif;
-    font-weight: bold;
-    box-shadow: 0 4px 8px hsla(330, 76%, 38%, 0.1);
-    background-image: url('frontend/assets/logos/logo1.avif'); /* Using logo as a background image */
-    background-repeat: no-repeat;
-    background-position: right 20px center;
+    position: relative;
 }
 
-/* Modern navigation style */
-nav ul {
-    list-style: none;
-    display: flex;
-    justify-content: center;
-    padding: 10px 0;
-    background-color: #4CAF50; /* Green, a symbol of hope and solidarity */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+nav .nav {
+    padding-top: 10px;
 }
 
-nav ul li {
-    margin: 0 20px;
-}
-
-nav ul li a {
-    text-decoration: none;
+nav .nav-link {
     color: #fff;
+    margin: 0 15px;
+    text-decoration: none;
     font-weight: bold;
-    padding: 10px 20px;
-    border-radius: 25px;
-    transition: background-color 0.3s ease;
 }
 
-nav ul li a:hover {
-    background-color: #fff;
+nav .nav-link:hover {
     color: #4CAF50;
 }
 
-/* Main section */
 main {
-    padding: 40px;
+    width: 80%;
     margin: 20px auto;
-    max-width: 1200px;
     background-color: rgba(255, 255, 255, 0.9);
-    border-radius: 15px;
+    padding: 20px;
+    border-radius: 10px;
+    position: relative;
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
 }
 
-/* Titles */
-h1, h2 {
-    color: #ff5733; /* Bright orange, the color of energy and enthusiasm */
-    text-align: center;
-    margin-bottom: 20px;
-    font-family: 'Montserrat', sans-serif;
-}
-
-/* Table styles */
-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-bottom: 20px;
-}
-
-th, td {
-    padding: 12px;
-    border: 1px solid #ddd;
-    text-align: center;
-    background-image: url('frontend/assets/icones/icone2.avif'); /* Example of using icon as background */
+main:before, main:after {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 100px;
+    background-size: cover;
     background-repeat: no-repeat;
-    background-position: center;
 }
 
-th {
-    background-color: #ffcc00;
-    color: #fff;
+main:before {
+    left: -110px;
+    background-image: url('assets/image/image1.avif'); /* Assurez-vous que le chemin est correct */
+}
+
+main:after {
+    right: -110px;
+    background-image: url('assets/image/image2.avif'); /* Assurez-vous que le chemin est correct */
+}
+
+h1, h2 {
     font-family: 'Montserrat', sans-serif;
 }
 
-td {
-    background-color: #fff;
-}
-
-/* Modern buttons with hover effect */
-button, .btn {
-    background-color: #4CAF50;
-    color: white;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 25px;
-    cursor: pointer;
-    font-weight: bold;
-    transition: background-color 0.3s ease;
-}
-
-button:hover, .btn:hover {
-    background-color: #ffcc00;
-    color: #fff;
-}
-
-/* Modern forms */
-input[type="text"], input[type="number"], input[type="email"], input[type="date"], textarea, select {
-    width: 100%;
-    padding: 12px;
-    margin: 8px 0;
-    border: 1px solid #ccc;
-    border-radius: 25px;
-    box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.1);
-    transition: border 0.3s ease;
-}
-
-input:focus, textarea:focus, select:focus {
-    border-color: #4CAF50;
-    outline: none;
-}
-
-/* Statistic section */
-#statistiques-donnees {
-    background-color: #ff5733;
-    color: #fff;
-    padding: 20px;
-    border-radius: 10px;
+#statistiques {
     text-align: center;
-    font-size: 1.5rem;
-    margin-bottom: 20px;
+    padding: 20px;
 }
 
-/* Responsiveness */
+/* Responsivité */
 @media (max-width: 768px) {
-    nav ul {
-        flex-direction: column;
-        text-align: center;
+    header, main {
+        width: 95%;
+        margin: 10px auto;
     }
 
-    nav ul li {
-        margin-bottom: 10px;
+    main:before, main:after {
+        display: none; /* Masquer les images sur les petits écrans pour éviter l'encombrement */
     }
-
-    main {
-        padding: 20px;
-    }
-
-    table {
-        font-size: 0.9rem;
-    }
-}
-
-.card {
-    border-radius: 10px;
-    background-color: #fff;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
-
-h2 {
-    color: #333;
-    font-weight: 600;
-}
-
-.btn-primary {
-    background-color: #FF7F50;
-    border: none;
-    transition: background-color 0.3s ease;
-}
-
-.btn-primary:hover {
-    background-color: #FF6347;
-}
-
-a {
-    color: #FF7F50;
-    text-decoration: none;
-}
-
-a:hover {
-    color: #FF6347;
-    text-decoration: underline;
 }

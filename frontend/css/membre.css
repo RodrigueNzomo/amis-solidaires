@@ -1,0 +1,85 @@
+/* Styles spécifiques pour la gestion des membres */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #e9eff1;
+    color: #333;
+    margin: 0;
+    padding: 0;
+    background-image: url('assets/image/decorative-left.jpg'), url('assets/image/decorative-right.jpg');
+    background-position: left top, right top;
+    background-repeat: no-repeat;
+    background-attachment: scroll;
+}
+
+header {
+    background-color: #007bff;
+    color: #fff;
+    padding: 10px 0;
+    text-align: center;
+}
+
+header img {
+    width: 50px; /* Adjust the size as needed */
+    height: auto;
+    margin: 10px 0;
+}
+
+nav ul {
+    padding: 0;
+    list-style-type: none;
+    text-align: center;
+}
+
+nav ul li {
+    display: inline;
+    margin-right: 20px;
+}
+
+nav ul li a {
+    text-decoration: none;
+    color: white;
+    padding: 5px 10px;
+    background-color: #6c757d;
+    border-radius: 5px;
+}
+
+nav ul li a:hover {
+    background-color: #495057;
+}
+
+main {
+    width: 80%;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+th, td {
+    padding: 8px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+th {
+    background-color: #007bff;
+    color: white;
+}
+
+/* Responsiveness */
+@media (max-width: 768px) {
+    header, main {
+        width: 95%;
+    }
+
+    header img {
+        width: 40px;  /* Adjust the size as needed */
+    }
+}
