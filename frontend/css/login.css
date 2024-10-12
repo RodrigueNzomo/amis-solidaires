@@ -1,37 +1,58 @@
+/* Styles spécifiques à la page de connexion */
 body {
     margin: 0;
     padding: 0;
-    background-color: #f9f9f9;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    color: #333;
+    background-image: url('../assets/background-solidarity.jpg'); /* Image de fond symbolisant la solidarité */
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
 }
 
 .login-container {
-    width: 100%;
-    max-width: 450px;
-    height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.login-card {
-    width: 100%;
-    max-width: 400px;
+    background-color: rgba(255, 255, 255, 0.8);
     padding: 20px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     border-radius: 15px;
-    background-color: #ffffff;
-    transition: none; /* Retirer les animations involontaires */
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
 }
 
-img {
-    width: 100%;
-    max-width: 150px; /* Fixer une taille max pour éviter les mouvements */
-    height: auto;
-    margin: 0 auto;
-    display: block;
+.card {
+    width: 400px;
+    max-width: 100%;
+    border-radius: 15px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+    background-color: #ffffff;
+}
+
+.login-logo {
+    max-width: 120px;
+    border-radius: 50%;
+    border: 2px solid #4b98e4;
+}
+
+.btn-primary {
+    background-color: #4CAF50;
+    border: none;
+    transition: background-color 0.3s ease;
+}
+
+.btn-primary:hover {
+    background-color: #ffcc00;
+}
+
+a {
+    color: #4b98e4;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+@media (max-width: 768px) {
+    .card {
+        width: 90%;
+        padding: 15px;
+    }
 }

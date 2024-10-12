@@ -4,120 +4,117 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gestion des Aides</title>
+    <title>Amis Solidaires - Gestion des Aides</title>
+    <link rel="stylesheet" href="css/styles.css">
     <link rel="stylesheet" href="css/aide.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-    <link rel="icon" type="image/avif" href="assets/icones/icone3.avif">
-    <script>
-        // Rediriger vers la page de connexion si l'utilisateur n'est pas connecté
-        document.addEventListener('DOMContentLoaded', function () {
-            if (!sessionStorage.getItem('isLoggedIn')) {
-                window.location.href = 'login.html';
-            }
-        });
-    </script>
+    <link rel="icon" type="image/avif" href="assets/icones/icone2.avif">
 </head>
 
 <body>
-    <div class="side-image left-image"></div> <!-- Image de gauche -->
-    <header class="bg-info p-3 text-center">
+    <header class="bg-warning text-white text-center py-4">
         <h1>Gestion des Aides</h1>
-        <img src="assets/icones/icone1.avif" alt="icone1"> <!-- Logo Example -->
-        <nav>
-            <ul class="nav justify-content-center">
-                <li class="nav-item">
-                    <a class="nav-link" href="index.html">Retour au Tableau de Bord</a>
-                </li>
-            </ul>
+        <nav class="nav justify-content-center">
+            <a class="nav-link" href="index.html">Tableau de bord</a>
+            <a class="nav-link" href="membre.html">Membres</a>
+            <a class="nav-link" href="cotisation.html">Cotisations</a>
+            <a class="nav-link" href="pret.html">Prêts</a>
+            <button id="logout-btn" class="btn btn-danger">Se déconnecter</button>
         </nav>
     </header>
 
-    <main class="container mt-4">
-        <!-- Section Liste des Aides -->
-        <section id="aides">
-            <h2>Liste des Aides</h2>
+    <main class="container my-5">
+        <h2 class="text-center mb-4">Liste des Aides</h2>
+        <div class="table-responsive">
             <table class="table table-striped">
-                <thead>
+                <thead class="table-dark">
                     <tr>
-                        <th>ID</th>
                         <th>Membre</th>
+                        <th>Type d'Aide</th>
                         <th>Montant</th>
                         <th>Date</th>
-                        <th>Description</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
-                <tbody id="liste-aides">
-                    <!-- Les aides seront chargées ici via JavaScript -->
+                <tbody id="aide-table-body">
+                    <!-- Les aides seront insérées ici via JavaScript -->
                 </tbody>
             </table>
-        </section>
+        </div>
+        <div class="text-center mt-5">
+            <button class="btn btn-success" id="ajouter-aide-btn">Ajouter une aide</button>
+        </div>
+    </main>
 
-        <!-- Section Ajouter une Aide -->
-        <section id="ajouter-aide" class="mt-4">
-            <h2>Ajouter une Aide</h2>
-            <form id="form-aide" class="needs-validation" novalidate>
-                <div class="mb-3">
-                    <label for="idMembre" class="form-label">ID Membre :</label>
-                    <input type="number" id="idMembre" name="idMembre" class="form-control" required>
+    <div class="modal fade" id="ajouterAideModal" tabindex="-1" aria-labelledby="ajouterAideLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="ajouterAideLabel">Ajouter une Aide</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="mb-3">
-                    <label for="montant" class="form-label">Montant :</label>
-                    <input type="number" id="montant" name="montant" class="form-control" required>
-                </div>
-                <div class="mb-3">
-                    <label for="dateAide" class="form-label">Date :</label>
-                    <input type="date" id="dateAide" name="dateAide" class="form-control" required>
-                </div>
-                <div class="mb-3">
-                    <label for="description" class="form-label">Description :</label>
-                    <textarea id="description" name="description" class="form-control" placeholder="Description"
-                        required></textarea>
-                </div>
-                <button type="submit" class="btn btn-primary">Ajouter Aide</button>
-            </form>
-        </section>
-
-        <!-- Section Filtres et Tri pour les Aides -->
-        <section id="filtrer-trier" class="mt-4">
-            <h2>Filtrer et Trier les Aides</h2>
-            <div class="d-flex justify-content-between align-items-center mb-3">
-                <div>
-                    <button id="tri-montant" class="btn btn-secondary me-2">Trier par Montant</button>
-                    <button id="tri-date" class="btn btn-secondary me-2">Trier par Date</button>
-                    <button id="tri-statut" class="btn btn-secondary">Trier par Statut</button>
-                </div>
-                <div>
-                    <label for="filtre-statut" class="form-label">Filtrer par statut :</label>
-                    <select id="filtre-statut" class="form-select">
-                        <option value="">Tous les statuts</option>
-                        <option value="en attente">En attente</option>
-                        <option value="accordée">Accordée</option>
-                    </select>
+                <div class="modal-body">
+                    <form id="ajouter-aide-form">
+                        <div class="mb-3">
+                            <label for="membre" class="form-label">Membre</label>
+                            <input type="text" class="form-control" id="membre" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="type-aide" class="form-label">Type d'Aide</label>
+                            <input type="text" class="form-control" id="type-aide" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="montant" class="form-label">Montant</label>
+                            <input type="number" class="form-control" id="montant" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="date" class="form-label">Date</label>
+                            <input type="date" class="form-control" id="date" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Ajouter</button>
+                    </form>
                 </div>
             </div>
+        </div>
+    </div>
 
-            <!-- Tableau des Aides Triées/Filtrées -->
-            <table class="table table-striped mt-3">
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Membre</th>
-                        <th>Montant</th>
-                        <th>Date</th>
-                        <th>Description</th>
-                        <th>Statut</th>
-                    </tr>
-                </thead>
-                <tbody id="liste-aides-filtrees">
-                    <!-- Les aides seront chargées ici via JavaScript -->
-                </tbody>
-            </table>
-        </section>
-    </main>
-    <div class="side-image right-image"></div> <!-- Image de droite -->
-    <script src="js/aides.js"></script>
+    <script>
+        document.getElementById('ajouter-aide-btn').addEventListener('click', function () {
+            const ajouterAideModal = new bootstrap.Modal(document.getElementById('ajouterAideModal'));
+            ajouterAideModal.show();
+        });
+
+        document.getElementById('ajouter-aide-form').addEventListener('submit', function (event) {
+            event.preventDefault();
+            // Placeholder pour ajouter une aide
+            const membre = document.getElementById('membre').value;
+            const typeAide = document.getElementById('type-aide').value;
+            const montant = document.getElementById('montant').value;
+            const date = document.getElementById('date').value;
+
+            const aideTableBody = document.getElementById('aide-table-body');
+            aideTableBody.innerHTML += `
+                <tr>
+                    <td>${membre}</td>
+                    <td>${typeAide}</td>
+                    <td>${montant}</td>
+                    <td>${date}</td>
+                    <td><button class="btn btn-danger btn-sm supprimer-aide-btn">Supprimer</button></td>
+                </tr>
+            `;
+
+            const ajouterAideModal = bootstrap.Modal.getInstance(document.getElementById('ajouterAideModal'));
+            ajouterAideModal.hide();
+        });
+
+        document.addEventListener('click', function (event) {
+            if (event.target.classList.contains('supprimer-aide-btn')) {
+                event.target.closest('tr').remove();
+            }
+        });
+    </script>
+
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
         integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
         crossorigin="anonymous"></script>

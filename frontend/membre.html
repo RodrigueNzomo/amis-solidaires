@@ -4,80 +4,128 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gestion des Membres</title>
-    <link rel="stylesheet" href="css/membre.css"> <!-- Mise à jour du chemin vers le fichier CSS spécifique -->
+    <title>Amis Solidaires - Gestion des Membres</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/membre.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-    <link rel="icon" href="assets/icones/icone2.avif" type="image/avif">
-    <script>
-        // Rediriger vers la page de connexion si l'utilisateur n'est pas connecté
-        document.addEventListener('DOMContentLoaded', function () {
-            if (!sessionStorage.getItem('isLoggedIn')) {
-                window.location.href = 'login.html';
-            }
-        });
-    </script>
+    <link rel="icon" type="image/avif" href="assets/icones/icone2.avif">
 </head>
 
 <body>
-    <header class="bg-info p-3 text-center">
+    <header class="bg-warning text-white text-center py-4">
         <h1>Gestion des Membres</h1>
-        <img src="assets/image/image1.avif" alt="Image de décoration">
-        <nav>
-            <ul class="nav justify-content-center">
-                <li class="nav-item">
-                    <a class="nav-link" href="index.html">Retour au Tableau de Bord</a>
-                </li>
-            </ul>
+        <nav class="nav justify-content-center">
+            <a class="nav-link" href="index.html">Tableau de bord</a>
+            <a class="nav-link" href="cotisation.html">Cotisations</a>
+            <a class="nav-link" href="pret.html">Prêts</a>
+            <a class="nav-link" href="aide.html">Aides</a>
+            <button id="logout-btn" class="btn btn-danger">Se déconnecter</button>
         </nav>
-        <button id="logout-btn" class="btn btn-danger">Se déconnecter</button>
     </header>
 
-    <main class="container mt-4">
-        <section id="membres">
-            <h2>Liste des Membres</h2>
+    <main class="container my-5">
+        <h2 class="text-center mb-4">Liste des Membres</h2>
+        <div class="table-responsive">
             <table class="table table-striped">
-                <thead>
+                <thead class="table-dark">
                     <tr>
-                        <th>ID</th>
                         <th>Nom</th>
                         <th>Prénom</th>
                         <th>Email</th>
                         <th>Téléphone</th>
+                        <th>Statut</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
-                <tbody id="liste-membres">
-                    <!-- Les membres seront chargés ici via JavaScript -->
+                <tbody id="membre-table-body">
+                    <!-- Les membres seront insérés ici via JavaScript -->
                 </tbody>
             </table>
-        </section>
-
-        <section id="ajouter-membre" class="mt-4">
-            <h2>Ajouter un Membre</h2>
-            <form id="form-membre" class="needs-validation" novalidate>
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="mb-3">
-                            <label for="nom" class="form-label">Nom :</label>
-                            <input type="text" class="form-control" id="nom" name="nom" required>
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="mb-3">
-                            <label for="prenom" class="form-label">Prénom :</label>
-                            <input type="text" class="form-control" id="prenom" name="prenom" required>
-                        </div>
-                    </div>
-                </div>
-                <div class="mb-3">
-                    <button type="submit" class="btn btn-primary">Ajouter Membre</button>
-                </div>
-            </form>
-        </section>
+        </div>
+        <div class="text-center mt-5">
+            <button class="btn btn-success" id="ajouter-membre-btn">Ajouter un membre</button>
+        </div>
     </main>
 
-    <script src="js/membre.js"></script>
+    <div class="modal fade" id="ajouterMembreModal" tabindex="-1" aria-labelledby="ajouterMembreLabel"
+        aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="ajouterMembreLabel">Ajouter un Membre</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="ajouter-membre-form">
+                        <div class="mb-3">
+                            <label for="nom" class="form-label">Nom</label>
+                            <input type="text" class="form-control" id="nom" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="prenom" class="form-label">Prénom</label>
+                            <input type="text" class="form-control" id="prenom" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email</label>
+                            <input type="email" class="form-control" id="email" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="telephone" class="form-label">Téléphone</label>
+                            <input type="text" class="form-control" id="telephone" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="statut" class="form-label">Statut</label>
+                            <select class="form-select" id="statut" required>
+                                <option value="Membre">Membre</option>
+                                <option value="Trésorier">Trésorier</option>
+                                <option value="Président">Président</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Ajouter</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('ajouter-membre-btn').addEventListener('click', function () {
+            const ajouterMembreModal = new bootstrap.Modal(document.getElementById('ajouterMembreModal'));
+            ajouterMembreModal.show();
+        });
+
+        document.getElementById('ajouter-membre-form').addEventListener('submit', function (event) {
+            event.preventDefault();
+            // Placeholder pour ajouter un membre
+            const nom = document.getElementById('nom').value;
+            const prenom = document.getElementById('prenom').value;
+            const email = document.getElementById('email').value;
+            const telephone = document.getElementById('telephone').value;
+            const statut = document.getElementById('statut').value;
+
+            const membreTableBody = document.getElementById('membre-table-body');
+            membreTableBody.innerHTML += `
+                <tr>
+                    <td>${nom}</td>
+                    <td>${prenom}</td>
+                    <td>${email}</td>
+                    <td>${telephone}</td>
+                    <td>${statut}</td>
+                    <td><button class="btn btn-danger btn-sm supprimer-membre-btn">Supprimer</button></td>
+                </tr>
+            `;
+
+            const ajouterMembreModal = bootstrap.Modal.getInstance(document.getElementById('ajouterMembreModal'));
+            ajouterMembreModal.hide();
+        });
+
+        document.addEventListener('click', function (event) {
+            if (event.target.classList.contains('supprimer-membre-btn')) {
+                event.target.closest('tr').remove();
+            }
+        });
+    </script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
         integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
         crossorigin="anonymous"></script>

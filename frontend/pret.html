@@ -4,117 +4,126 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gestion des Prêts</title>
+    <title>Amis Solidaires - Gestion des Prêts</title>
+    <link rel="stylesheet" href="css/styles.css">
     <link rel="stylesheet" href="css/pret.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-    <link rel="icon" type="image/avif" href="assets/image/image1.avif">
-    <script>
-        // Rediriger vers la page de connexion si l'utilisateur n'est pas connecté
-        document.addEventListener('DOMContentLoaded', function () {
-            if (!sessionStorage.getItem('isLoggedIn')) {
-                window.location.href = 'login.html';
-            }
-        });
-    </script>
+    <link rel="icon" type="image/avif" href="assets/icones/icone2.avif">
 </head>
 
 <body>
-    <header class="container mt-4">
+    <header class="bg-warning text-white text-center py-4">
         <h1>Gestion des Prêts</h1>
-        <img src="assets/icones/icone2.avif" alt="icone2"> <!-- Logo Example -->
-        <nav>
-            <ul class="nav">
-                <li class="nav-item"><a class="nav-link" href="index.html">Retour au Tableau de Bord</a></li>
-            </ul>
+        <nav class="nav justify-content-center">
+            <a class="nav-link" href="index.html">Tableau de bord</a>
+            <a class="nav-link" href="membre.html">Membres</a>
+            <a class="nav-link" href="cotisation.html">Cotisations</a>
+            <a class="nav-link" href="aide.html">Aides</a>
+            <button id="logout-btn" class="btn btn-danger">Se déconnecter</button>
         </nav>
-        <button id="logout-btn" class="btn btn-danger">Se déconnecter</button>
     </header>
 
-    <main class="container mt-5">
-        <!-- Section Prêts -->
-        <section id="prets">
-            <h2>Liste des Prêts</h2>
+    <main class="container my-5">
+        <h2 class="text-center mb-4">Liste des Prêts</h2>
+        <div class="table-responsive">
             <table class="table table-striped">
-                <thead>
+                <thead class="table-dark">
                     <tr>
-                        <th>ID</th>
                         <th>Membre</th>
                         <th>Montant</th>
-                        <th>Taux d'Intérêt</th>
-                        <th>Date d'Échéance</th>
+                        <th>Date de Début</th>
+                        <th>Date de Fin</th>
+                        <th>Statut</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
-                <tbody id="liste-prets">
-                    <!-- Les prêts seront chargés ici via JavaScript -->
+                <tbody id="pret-table-body">
+                    <!-- Les prêts seront insérés ici via JavaScript -->
                 </tbody>
             </table>
-        </section>
-
-        <!-- Formulaire d'ajout de prêt -->
-        <section id="ajouter-pret" class="mt-4">
-            <h2>Ajouter un Prêt</h2>
-            <form id="form-pret">
-                <div class="mb-3">
-                    <label for="idMembre" class="form-label">ID Membre :</label>
-                    <input type="number" class="form-control" id="idMembre" name="idMembre" required>
-                </div>
-                <div class="mb-3">
-                    <label for="montant" class="form-label">Montant :</label>
-                    <input type="number" class="form-control" id="montant" name="montant" required>
-                </div>
-                <div class="mb-3">
-                    <label for="tauxInteret" class="form-label">Taux d'Intérêt (%) :</label>
-                    <input type="number" class="form-control" id="tauxInteret" name="tauxInteret" required>
-                </div>
-                <div class="mb-3">
-                    <label for="echeance" class="form-label">Date d'Échéance :</label>
-                    <input type="date" class="form-control" id="echeance" name="echeance" required>
-                </div>
-                <button type="submit" class="btn btn-primary">Ajouter Prêt</button>
-            </form>
-        </section>
-
-        <!-- Filtrage et tri des prêts -->
-        <section class="container mt-4">
-            <h2>Filtrer et Trier les Prêts</h2>
-            <div class="d-flex justify-content-between align-items-center">
-                <div>
-                    <button id="tri-montant" class="btn btn-secondary me-2">Trier par Montant</button>
-                    <button id="tri-date-debut" class="btn btn-secondary me-2">Trier par Date de Début</button>
-                    <button id="tri-statut" class="btn btn-secondary">Trier par Statut</button>
-                </div>
-                <div class="mb-3">
-                    <label for="filtre-statut" class="form-label">Filtrer par statut :</label>
-                    <select id="filtre-statut" class="form-select">
-                        <option value="" selected>Tous les statuts</option>
-                        <option value="en cours">En cours</option>
-                        <option value="remboursé">Remboursé</option>
-                    </select>
-                </div>
-            </div>
-        </section>
-
-        <!-- Liste des prêts après tri et filtrage -->
-        <table class="table table-striped mt-3">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Membre</th>
-                    <th>Montant</th>
-                    <th>Date de Début</th>
-                    <th>Date de Fin</th>
-                    <th>Statut</th>
-                </tr>
-            </thead>
-            <tbody id="liste-prets">
-                <!-- Les prêts seront chargés ici via JavaScript -->
-            </tbody>
-        </table>
+        </div>
+        <div class="text-center mt-5">
+            <button class="btn btn-success" id="ajouter-pret-btn">Ajouter un prêt</button>
+        </div>
     </main>
 
-    <script src="js/pret.js"></script>
+    <div class="modal fade" id="ajouterPretModal" tabindex="-1" aria-labelledby="ajouterPretLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="ajouterPretLabel">Ajouter un Prêt</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="ajouter-pret-form">
+                        <div class="mb-3">
+                            <label for="membre" class="form-label">Membre</label>
+                            <input type="text" class="form-control" id="membre" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="montant" class="form-label">Montant</label>
+                            <input type="number" class="form-control" id="montant" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="date-debut" class="form-label">Date de Début</label>
+                            <input type="date" class="form-control" id="date-debut" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="date-fin" class="form-label">Date de Fin</label>
+                            <input type="date" class="form-control" id="date-fin" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="statut" class="form-label">Statut</label>
+                            <select class="form-select" id="statut" required>
+                                <option value="En cours">En cours</option>
+                                <option value="Terminé">Terminé</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Ajouter</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('ajouter-pret-btn').addEventListener('click', function () {
+            const ajouterPretModal = new bootstrap.Modal(document.getElementById('ajouterPretModal'));
+            ajouterPretModal.show();
+        });
+
+        document.getElementById('ajouter-pret-form').addEventListener('submit', function (event) {
+            event.preventDefault();
+            // Placeholder pour ajouter un prêt
+            const membre = document.getElementById('membre').value;
+            const montant = document.getElementById('montant').value;
+            const dateDebut = document.getElementById('date-debut').value;
+            const dateFin = document.getElementById('date-fin').value;
+            const statut = document.getElementById('statut').value;
+
+            const pretTableBody = document.getElementById('pret-table-body');
+            pretTableBody.innerHTML += `
+                <tr>
+                    <td>${membre}</td>
+                    <td>${montant}</td>
+                    <td>${dateDebut}</td>
+                    <td>${dateFin}</td>
+                    <td>${statut}</td>
+                    <td><button class="btn btn-danger btn-sm supprimer-pret-btn">Supprimer</button></td>
+                </tr>
+            `;
+
+            const ajouterPretModal = bootstrap.Modal.getInstance(document.getElementById('ajouterPretModal'));
+            ajouterPretModal.hide();
+        });
+
+        document.addEventListener('click', function (event) {
+            if (event.target.classList.contains('supprimer-pret-btn')) {
+                event.target.closest('tr').remove();
+            }
+        });
+    </script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
         integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
         crossorigin="anonymous"></script>
